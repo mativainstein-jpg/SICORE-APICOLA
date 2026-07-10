@@ -1,6 +1,10 @@
-import { autoUpdater } from "electron-updater";
+import electronUpdaterPkg from "electron-updater";
 import log from "electron-log";
 import type { BrowserWindow } from "electron";
+
+// electron-updater es un módulo CommonJS: no expone exports nombrados en ESM,
+// hay que desestructurar desde el export default.
+const { autoUpdater } = electronUpdaterPkg;
 
 /**
  * Auto-update en segundo plano contra GitHub Releases (sección 8.4-a).
