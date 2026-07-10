@@ -19,7 +19,7 @@ function crearVentana(): void {
     minHeight: 700,
     title: "Sicore / Apícola — NAIMAN Foods",
     webPreferences: {
-      preload: path.join(__dirname, "../preload/index.js"),
+      preload: path.join(__dirname, "../preload/index.cjs"),
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
