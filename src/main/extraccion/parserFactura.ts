@@ -101,7 +101,14 @@ export async function extraerDatosFactura(rutaArchivo: string): Promise<DatosExt
   }
 
   if (texto.length < MIN_CARACTERES_TEXTO_UTIL) {
-    texto = await extraerTextoOcr(rutaArchivo);
+    if (esPdf) {
+      // PDF escaneado sin capa de texto: por ahora no se rasteriza a imagen
+      // para pasarlo por OCR (requeriría una dependencia nativa extra). El
+      // usuario completa esos campos a mano (fallback manual, sección 4).
+      texto = "";
+    } else {
+      texto = await extraerTextoOcr(rutaArchivo);
+    }
     metodo = "ocr";
   }
 
