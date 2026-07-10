@@ -1,0 +1,10 @@
+{
+  "retencion_iva_miel_pct": 6,
+  "retencion_ganancias_pct": 2,
+  "minimo_bienes": 224000,
+  "minimo_honorarios": 160000,
+  "minimo_servicios_transporte": 67170,
+  "aplazo_pct": 4.5,
+  "aplazo_umbral_neto": 50000,
+  "vencimiento_dias_default": 7
+}

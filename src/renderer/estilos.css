@@ -1,0 +1,150 @@
+:root {
+  color-scheme: light;
+  --color-fondo: #f4f6f5;
+  --color-panel: #ffffff;
+  --color-borde: #d8ddd9;
+  --color-texto: #1e2a22;
+  --color-primario: #2f6b3a;
+  --color-primario-hover: #244f2b;
+  --color-manual: #b45309;
+  --color-extraido: #2f6b3a;
+  --color-error: #b3261e;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--color-fondo);
+  color: var(--color-texto);
+  font-size: 15px;
+}
+
+button {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid var(--color-borde);
+  background: var(--color-primario);
+  color: white;
+  cursor: pointer;
+}
+button:hover { background: var(--color-primario-hover); }
+button.secundario { background: white; color: var(--color-texto); }
+button.secundario:hover { background: #eef1ef; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+input, select {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--color-borde);
+  width: 100%;
+}
+
+label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #4b564f;
+}
+
+.app-layout { display: flex; flex-direction: column; min-height: 100vh; }
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  background: var(--color-primario);
+  color: white;
+}
+.app-header h1 { font-size: 1.15rem; margin: 0; }
+
+.contenido { flex: 1; padding: 24px; }
+
+.pantalla-centrada {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 16px;
+  text-align: center;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: calc(100vh - 140px);
+}
+
+.panel {
+  background: var(--color-panel);
+  border: 1px solid var(--color-borde);
+  border-radius: 10px;
+  padding: 16px;
+  overflow: auto;
+}
+
+.campo-origen-factura { border-left: 3px solid var(--color-extraido); padding-left: 8px; }
+.campo-origen-manual { border-left: 3px solid var(--color-manual); padding-left: 8px; }
+
+.fila-campos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+.badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 6px;
+}
+.badge-factura { background: #e5f3e8; color: var(--color-extraido); }
+.badge-manual { background: #fdecd2; color: var(--color-manual); }
+
+.retenciones-preview {
+  background: #fbfbf8;
+  border: 1px solid var(--color-borde);
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 16px;
+}
+.retenciones-preview table { width: 100%; border-collapse: collapse; }
+.retenciones-preview td { padding: 6px 4px; border-bottom: 1px solid #eee; }
+.retenciones-preview td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+.retenciones-preview tr.total td { font-weight: 700; font-size: 1.05rem; }
+
+.error-banner {
+  background: #fbeaea;
+  color: var(--color-error);
+  border: 1px solid #f3c6c4;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 12px;
+}
+
+.cola-lista { list-style: none; padding: 0; margin: 0; }
+.cola-lista li { padding: 8px 10px; border-bottom: 1px solid var(--color-borde); }
+
+.toggle-miel {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  background: white;
+  border: 1px solid var(--color-borde);
+  border-radius: 999px;
+  padding: 6px 14px;
+}
+
+.acciones-formulario {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}

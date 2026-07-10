@@ -1,0 +1,72 @@
+{
+  "name": "sicore-apicola",
+  "productName": "Sicore Apicola",
+  "version": "0.1.0",
+  "description": "App de escritorio para digitalizar facturas de compra y generar Sicore.xlsx / Apicola.xlsx",
+  "author": "NAIMAN Foods",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "dist-electron/main/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "typecheck": "tsc -b --noEmit",
+    "test": "vitest run",
+    "electron:dev": "npm run build && electron .",
+    "package:win": "npm run build && electron-builder --win",
+    "package:mac": "npm run build && electron-builder --mac"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "html2canvas": "^1.4.1",
+    "electron-updater": "^6.3.9",
+    "electron-log": "^5.2.4",
+    "pdfjs-dist": "^4.7.76",
+    "tesseract.js": "^5.1.1",
+    "proper-lockfile": "^4.1.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/proper-lockfile": "^4.1.4",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.3.4",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "vite-plugin-electron": "^0.29.0",
+    "vite-plugin-electron-renderer": "^0.14.6",
+    "vitest": "^2.1.8"
+  },
+  "build": {
+    "appId": "com.naimanfoods.sicoreapicola",
+    "productName": "Sicore Apicola",
+    "files": [
+      "dist",
+      "dist-electron"
+    ],
+    "directories": {
+      "buildResources": "resources"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "mativainstein-jpg",
+        "repo": "sicore-apicola"
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "resources/icon.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "resources/icon.icns",
+      "category": "public.app-category.business"
+    }
+  }
+}
