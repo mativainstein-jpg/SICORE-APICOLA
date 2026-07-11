@@ -17,6 +17,32 @@ function buscar(regex: RegExp, texto: string): string | undefined {
   return m?.[1]?.trim();
 }
 
+/**
+ * Facturas C de monotributistas (y muchas facturas con ítems) no tienen
+ * "Neto Gravado"/"IVA" como etiquetas sueltas: tienen una tabla de
+ * productos con columnas Cantidad / U. Medida / Precio Unit. / % Bonif /
+ * Imp. Bonif. / Subtotal. Busca la fila de datos de esa tabla (un número,
+ * una palabra de unidad, y otros 4 números) para poder sacar de ahí la
+ * cantidad (Kg), el precio unitario y el subtotal (Neto/Total).
+ */
+function buscarFilaTablaProductos(
+  texto: string,
+): { cantidad: string; precioUnit: string; subtotal: string } | undefined {
+  // Número en formato argentino: con o sin puntos de miles (ej. "1006,00" o
+  // "1.006,00"). El orden importa: si probáramos primero la versión "sin
+  // puntos" quedaría conforme con un prefijo corto (ej. "316" de
+  // "3168900") sin llegar a intentar la alternativa correcta.
+  const NUM = String.raw`\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:,\d+)?`;
+  const m = texto.match(
+    new RegExp(
+      `(${NUM})\\s+(?:unidades?|u\\.?|un\\.?|kgs?\\.?|kilos?|litros?|lts?\\.?)\\s+(${NUM})\\s+[\\d.,]+\\s+[\\d.,]+\\s+(${NUM})`,
+      "i",
+    ),
+  );
+  if (!m) return undefined;
+  return { cantidad: m[1], precioUnit: m[2], subtotal: m[3] };
+}
+
 function parsearFechaAAAAMMDD(fechaTexto: string | undefined): string | undefined {
   if (!fechaTexto) return undefined;
   const m = fechaTexto.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
@@ -68,18 +94,23 @@ export function parsearCamposDesdeTexto(texto: string): Omit<
     ? nombreProveedorTexto.split(PROXIMA_ETIQUETA)[0].trim()
     : undefined;
 
+  const filaTabla = buscarFilaTablaProductos(texto);
+
   const netoTexto =
-    buscar(/(?:Importe\s*)?Neto\s*Gravado\s*:?\s*\$?\s*([\d.,]+)/i, texto) ??
-    buscar(/(?:Importe\s*)?Neto\s*:?\s*\$?\s*([\d.,]+)/i, texto) ??
-    buscar(/Subtotal\s*:?\s*\$?\s*([\d.,]+)/i, texto);
-  const noGravadoTexto = buscar(/Importe\s*(?:Neto\s*)?No\s*Gravado\s*:?\s*\$?\s*([\d.,]+)/i, texto);
-  const ivaTexto = buscar(/(?:IVA|I\.V\.A\.)\s*(?:21\s*%|10[.,]5\s*%)?\s*:?\s*\$?\s*([\d.,]+)/i, texto);
-  const percepcionesTexto = buscar(/Percepci[oó]n(?:es)?[^:\n]*:?\s*\$?\s*([\d.,]+)/i, texto);
-  const totalTexto = buscar(/Importe\s*Total\s*:?\s*\$?\s*([\d.,]+)/i, texto);
-  const kgTexto = buscar(/(\d[\d.,]*)\s*Kg\b/i, texto);
+    buscar(/(?:Importe\s*)?Neto\s*Gravado\s*:?\s*\$?\s*(\d[\d.,]*)/i, texto) ??
+    buscar(/(?:Importe\s*)?Neto\s*:?\s*\$?\s*(\d[\d.,]*)/i, texto) ??
+    buscar(/Subtotal\s*:?\s*\$?\s*(\d[\d.,]*)/i, texto) ??
+    filaTabla?.subtotal;
+  const noGravadoTexto = buscar(/Importe\s*(?:Neto\s*)?No\s*Gravado\s*:?\s*\$?\s*(\d[\d.,]*)/i, texto);
+  const ivaTexto = buscar(/(?:IVA|I\.V\.A\.)\s*(?:21\s*%|10[.,]5\s*%)?\s*:?\s*\$?\s*(\d[\d.,]*)/i, texto);
+  const percepcionesTexto = buscar(/Percepci[oó]n(?:es)?[^:\n]*:?\s*\$?\s*(\d[\d.,]*)/i, texto);
+  const totalTexto =
+    buscar(/Importe\s*Total\s*:?\s*\$?\s*(\d[\d.,]*)/i, texto) ?? filaTabla?.subtotal;
+  const kgTexto = buscar(/(\d[\d.,]*)\s*Kg\b/i, texto) ?? filaTabla?.cantidad;
   const precioTexto =
-    buscar(/Precio\s*(?:Unitario|por\s*Kg|x\s*Kg|Unit\.?)?\s*:?\s*\$?\s*([\d.,]+)/i, texto) ??
-    buscar(/P\.?\s*Unit(?:ario|\.)?\s*:?\s*\$?\s*([\d.,]+)/i, texto);
+    buscar(/Precio\s*(?:Unitario|por\s*Kg|x\s*Kg|Unit\.?)?\s*:?\s*\$?\s*(\d[\d.,]*)/i, texto) ??
+    buscar(/P\.?\s*Unit(?:ario|\.)?\s*:?\s*\$?\s*(\d[\d.,]*)/i, texto) ??
+    filaTabla?.precioUnit;
 
   return {
     fechaEmision: parsearFechaAAAAMMDD(fechaEmisionTexto),

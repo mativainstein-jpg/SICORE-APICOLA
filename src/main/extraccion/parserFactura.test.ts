@@ -39,6 +39,36 @@ describe("parsearCamposDesdeTexto - texto de OCR sin saltos de línea limpios", 
   });
 });
 
+describe("parsearCamposDesdeTexto - factura C de monotributista (sin Neto/IVA explícitos)", () => {
+  const TEXTO_FACTURA_C = `
+FACTURA C COD. 011
+ARISTUCHE SERGIO DANIEL MARIO
+Razón Social: ARISTUCHE SERGIO DANIEL MARIO
+Domicilio Comercial: San Martin 379 - Santa Teresa, Santa Fe
+Condición frente al IVA: Responsable Monotributo
+Punto de Venta: 00004 Comp. Nro: 00000115
+Fecha de Emisión: 07/07/2026
+CUIT: 20138712479
+Ingresos Brutos: 1020123484
+Fecha de Inicio de Actividades: 01/11/2017
+CUIT: 33708955499 Apellido y Nombre / Razón Social: NAIMAN S.A.
+Condición frente al IVA: IVA Responsable Inscripto Domicilio: Jose Ubach Y Roca 1153 - Parana, Entre Ríos
+Condición de venta: Contado
+Código Producto / Servicio Cantidad U. Medida Precio Unit. % Bonif Imp. Bonif. Subtotal
+Miel de abeja 1006,00 unidades 3150,00 0,00 0,00 3168900,00
+`;
+
+  it("saca Cantidad/Precio Unit./Subtotal de la tabla cuando no hay Neto Gravado ni IVA", () => {
+    const datos = parsearCamposDesdeTexto(TEXTO_FACTURA_C);
+    expect(datos.cuit).toBe("20138712479"); // el del proveedor, no el de NAIMAN
+    expect(datos.tipoComprobante).toBe("FCC");
+    expect(datos.kg).toBe(1006);
+    expect(datos.precioFacturado).toBe(3150);
+    expect(datos.neto).toBe(3168900);
+    expect(datos.total).toBe(3168900);
+  });
+});
+
 describe("detectarEsMiel", () => {
   it("detecta miel por palabras clave", () => {
     expect(detectarEsMiel("Venta de miel a granel")).toBe(true);
