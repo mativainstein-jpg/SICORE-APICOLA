@@ -3,8 +3,11 @@ import type { FacturaConfirmada } from "../shared/types.js";
 import { RevisionFactura } from "./pages/RevisionFactura.js";
 import { Configuracion } from "./pages/Configuracion.js";
 import { construirFacturaDesdeExtraccion } from "./util/construirFactura.js";
+import { renderizarPrimeraPaginaComoPng } from "./util/renderizarPdf.js";
 
 type Pantalla = "carga" | "revision" | "configuracion";
+
+const MIN_CARACTERES_TEXTO_UTIL = 40;
 
 export function App() {
   const [carpetaDestino, setCarpetaDestino] = useState<string | undefined>();
@@ -48,7 +51,24 @@ export function App() {
     const [siguiente, ...resto] = cola;
     setExtrayendo(true);
     try {
-      const datos = await window.sicoreApi.factura.extraerDatos(siguiente);
+      let datos = await window.sicoreApi.factura.extraerDatos(siguiente);
+
+      const esPdfSinTexto =
+        siguiente.toLowerCase().endsWith(".pdf") &&
+        (!datos.textoCompleto || datos.textoCompleto.length < MIN_CARACTERES_TEXTO_UTIL);
+
+      if (esPdfSinTexto) {
+        // PDF escaneado (sin capa de texto): lo renderizamos como imagen acá
+        // en la ventana (con el <canvas> del navegador) y lo mandamos a OCR.
+        try {
+          const base64Pdf = await window.sicoreApi.archivo.leerBase64(siguiente);
+          const pngDataUrl = await renderizarPrimeraPaginaComoPng(base64Pdf);
+          datos = await window.sicoreApi.factura.extraerDatosDesdeImagen(pngDataUrl);
+        } catch (err) {
+          console.error("No se pudo hacer OCR sobre el PDF escaneado:", err);
+        }
+      }
+
       setFacturaEnRevision(construirFacturaDesdeExtraccion(siguiente, datos));
       setCola(resto);
       setPantalla("revision");

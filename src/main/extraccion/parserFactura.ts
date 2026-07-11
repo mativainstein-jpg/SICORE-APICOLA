@@ -3,9 +3,11 @@ import { extraerTextoOcr } from "./ocr.js";
 import { detectarEsMiel } from "./deteccionMiel.js";
 import type { DatosExtraidos, TipoComprobante } from "../../shared/types.js";
 
-function parsearMonto(texto: string): number | undefined {
+function parsearMonto(texto: string | undefined): number | undefined {
+  if (!texto) return undefined;
   // Formato argentino: 1.234.567,89
   const limpio = texto.replace(/\./g, "").replace(",", ".").replace(/[^\d.-]/g, "");
+  if (!limpio) return undefined;
   const n = Number(limpio);
   return Number.isFinite(n) ? n : undefined;
 }
@@ -72,13 +74,13 @@ export function parsearCamposDesdeTexto(texto: string): Omit<
     nombreProveedor,
     numeroFactura: numeroFacturaTexto,
     tipoComprobante: detectarTipoComprobante(texto),
-    neto: parsearMonto(netoTexto ?? ""),
-    noGravado: parsearMonto(noGravadoTexto ?? ""),
-    ivaMonto: parsearMonto(ivaTexto ?? ""),
-    percepciones: parsearMonto(percepcionesTexto ?? ""),
-    total: parsearMonto(totalTexto ?? ""),
-    kg: parsearMonto(kgTexto ?? ""),
-    precioFacturado: parsearMonto(precioTexto ?? ""),
+    neto: parsearMonto(netoTexto),
+    noGravado: parsearMonto(noGravadoTexto),
+    ivaMonto: parsearMonto(ivaTexto),
+    percepciones: parsearMonto(percepcionesTexto),
+    total: parsearMonto(totalTexto),
+    kg: parsearMonto(kgTexto),
+    precioFacturado: parsearMonto(precioTexto),
     esMiel: detectarEsMiel(texto),
   };
 }
@@ -114,4 +116,17 @@ export async function extraerDatosFactura(rutaArchivo: string): Promise<DatosExt
 
   const campos = parsearCamposDesdeTexto(texto);
   return { ...campos, textoCompleto: texto, metodoExtraccion: metodo };
+}
+
+/**
+ * Extrae los campos de una factura a partir de una imagen ya renderizada
+ * (dataURL PNG), usando OCR. Se usa para PDFs escaneados: el renderer
+ * convierte la página del PDF a imagen (con Canvas del navegador, sin
+ * depender de librerías nativas en el proceso principal) y manda esa
+ * imagen acá para el reconocimiento de texto.
+ */
+export async function extraerDatosDesdeImagen(pngDataUrl: string): Promise<DatosExtraidos> {
+  const texto = await extraerTextoOcr(pngDataUrl);
+  const campos = parsearCamposDesdeTexto(texto);
+  return { ...campos, textoCompleto: texto, metodoExtraccion: "ocr" };
 }

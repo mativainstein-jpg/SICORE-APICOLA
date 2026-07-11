@@ -1,5 +1,6 @@
 import { ipcMain, dialog, BrowserWindow } from "electron";
 import ExcelJS from "exceljs";
+import { promises as fs } from "node:fs";
 import { leerParametros, guardarParametros } from "../config/parametros.js";
 import { verificarClaveAdmin, cambiarClaveAdmin } from "../config/admin.js";
 import {
@@ -11,7 +12,7 @@ import {
 import { chequearDuplicado } from "../excel/duplicados.js";
 import { agregarFacturaASicore, nombreHojaMesActual, COL_SICORE } from "../excel/sicoreWriter.js";
 import { agregarFacturaAApicola } from "../excel/apicolaWriter.js";
-import { extraerDatosFactura } from "../extraccion/parserFactura.js";
+import { extraerDatosFactura, extraerDatosDesdeImagen } from "../extraccion/parserFactura.js";
 import { guardarCaptura } from "../capturas.js";
 import { calcularRetenciones, type FilaCargada } from "../calculo/retenciones.js";
 import type { FacturaConfirmada, ParametrosFiscales } from "../../shared/types.js";
@@ -99,6 +100,15 @@ export function registrarHandlersIpc(ventanaPrincipal: () => BrowserWindow | nul
   ipcMain.handle("factura:extraerDatos", async (_evt, rutaArchivo: string) =>
     extraerDatosFactura(rutaArchivo),
   );
+
+  ipcMain.handle("factura:extraerDatosDesdeImagen", async (_evt, pngDataUrl: string) =>
+    extraerDatosDesdeImagen(pngDataUrl),
+  );
+
+  ipcMain.handle("archivo:leerBase64", async (_evt, rutaArchivo: string) => {
+    const buffer = await fs.readFile(rutaArchivo);
+    return buffer.toString("base64");
+  });
 
   ipcMain.handle(
     "factura:chequearDuplicado",

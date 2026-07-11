@@ -34,6 +34,8 @@ const api = {
       ipcRenderer.invoke("factura:seleccionarArchivos"),
     extraerDatos: (rutaArchivo: string): Promise<DatosExtraidos> =>
       ipcRenderer.invoke("factura:extraerDatos", rutaArchivo),
+    extraerDatosDesdeImagen: (pngDataUrl: string): Promise<DatosExtraidos> =>
+      ipcRenderer.invoke("factura:extraerDatosDesdeImagen", pngDataUrl),
     chequearDuplicado: (cuit: string, numeroFactura: string): Promise<DuplicadoCheckResult> =>
       ipcRenderer.invoke("factura:chequearDuplicado", cuit, numeroFactura),
     previsualizarRetenciones: (factura: FacturaConfirmada): Promise<RetencionesCalculadas> =>
@@ -44,6 +46,10 @@ const api = {
   captura: {
     guardar: (rutaFacturaOriginal: string, pngDataUrl: string): Promise<string> =>
       ipcRenderer.invoke("captura:guardar", rutaFacturaOriginal, pngDataUrl),
+  },
+  archivo: {
+    leerBase64: (rutaArchivo: string): Promise<string> =>
+      ipcRenderer.invoke("archivo:leerBase64", rutaArchivo),
   },
   actualizaciones: {
     onListaParaInstalar: (callback: (mensaje: string) => void): void => {
