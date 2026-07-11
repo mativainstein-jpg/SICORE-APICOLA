@@ -78,9 +78,8 @@ export function calcularRetencionGanancias(
     factura.cuit,
     filasYaCargadasEnHojaDelMes,
   );
-  const minimoAplicado = esPrimera
-    ? obtenerMinimoGanancias(factura, parametros)
-    : 0;
+  const minimoAplicado =
+    esPrimera && factura.aplicarMinimoGanancias ? obtenerMinimoGanancias(factura, parametros) : 0;
   const pct =
     factura.retencionGananciasPctManual ?? parametros.retencion_ganancias_pct;
   const base = Math.max(0, factura.neto - minimoAplicado);

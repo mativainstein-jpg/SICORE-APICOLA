@@ -36,8 +36,12 @@ const api = {
       ipcRenderer.invoke("factura:extraerDatos", rutaArchivo),
     extraerDatosDesdeImagen: (pngDataUrl: string): Promise<DatosExtraidos> =>
       ipcRenderer.invoke("factura:extraerDatosDesdeImagen", pngDataUrl),
-    chequearDuplicado: (cuit: string, numeroFactura: string): Promise<DuplicadoCheckResult> =>
-      ipcRenderer.invoke("factura:chequearDuplicado", cuit, numeroFactura),
+    chequearDuplicado: (
+      cuit: string,
+      numeroFactura: string,
+      tipoComprobante: "FCA" | "FCC",
+    ): Promise<DuplicadoCheckResult> =>
+      ipcRenderer.invoke("factura:chequearDuplicado", cuit, numeroFactura, tipoComprobante),
     previsualizarRetenciones: (factura: FacturaConfirmada): Promise<RetencionesCalculadas> =>
       ipcRenderer.invoke("factura:previsualizarRetenciones", factura),
     confirmar: (factura: FacturaConfirmada): Promise<unknown> =>

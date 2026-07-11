@@ -95,6 +95,11 @@ export function FormularioDatos({ factura, setFactura }: Props) {
             <option value="FCA">FCA</option>
             <option value="FCC">FCC</option>
           </select>
+          {factura.tipoComprobante === "FCC" && (
+            <small style={{ color: "var(--color-manual)" }}>
+              Esta factura solo se va a cargar en Apícola, no en Sicore.
+            </small>
+          )}
         </CampoConOrigen>
 
         <CampoConOrigen etiqueta="Kg" origen={origen("kg")}>
@@ -209,35 +214,52 @@ export function FormularioDatos({ factura, setFactura }: Props) {
           />
         </CampoConOrigen>
 
-        <CampoConOrigen etiqueta="Categoría del mínimo no imponible (col. M)">
-          <select
-            value={factura.categoriaMinimoGanancias}
-            onChange={(e) =>
-              setFactura((prev) => ({
-                ...prev,
-                categoriaMinimoGanancias: e.target.value as FacturaConfirmada["categoriaMinimoGanancias"],
-              }))
-            }
-          >
-            <option value="bienes">Bienes</option>
-            <option value="honorarios">Honorarios</option>
-            <option value="servicios_transporte">Servicios y transportes</option>
-            <option value="manual">Monto manual</option>
-          </select>
-        </CampoConOrigen>
-        {factura.categoriaMinimoGanancias === "manual" && (
-          <CampoConOrigen etiqueta="Mínimo manual ($)">
+        <div>
+          <label>
             <input
-              type="number"
-              value={factura.minimoGananciasManual ?? ""}
+              type="checkbox"
+              checked={factura.aplicarMinimoGanancias}
               onChange={(e) =>
-                setFactura((prev) => ({
-                  ...prev,
-                  minimoGananciasManual: Number(e.target.value),
-                }))
+                setFactura((prev) => ({ ...prev, aplicarMinimoGanancias: e.target.checked }))
               }
-            />
-          </CampoConOrigen>
+            />{" "}
+            Aplicar mínimo no imponible (solo la primera factura del mes por CUIT)
+          </label>
+        </div>
+
+        {factura.aplicarMinimoGanancias && (
+          <>
+            <CampoConOrigen etiqueta="Categoría del mínimo no imponible (col. M)">
+              <select
+                value={factura.categoriaMinimoGanancias}
+                onChange={(e) =>
+                  setFactura((prev) => ({
+                    ...prev,
+                    categoriaMinimoGanancias: e.target.value as FacturaConfirmada["categoriaMinimoGanancias"],
+                  }))
+                }
+              >
+                <option value="bienes">Bienes</option>
+                <option value="honorarios">Honorarios</option>
+                <option value="servicios_transporte">Servicios y transportes</option>
+                <option value="manual">Monto manual</option>
+              </select>
+            </CampoConOrigen>
+            {factura.categoriaMinimoGanancias === "manual" && (
+              <CampoConOrigen etiqueta="Mínimo manual ($)">
+                <input
+                  type="number"
+                  value={factura.minimoGananciasManual ?? ""}
+                  onChange={(e) =>
+                    setFactura((prev) => ({
+                      ...prev,
+                      minimoGananciasManual: Number(e.target.value),
+                    }))
+                  }
+                />
+              </CampoConOrigen>
+            )}
+          </>
         )}
       </div>
 

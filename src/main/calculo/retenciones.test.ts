@@ -32,6 +32,7 @@ function factura(overrides: Partial<FacturaConfirmada> = {}): FacturaConfirmada 
     percepciones: 0,
     total: 121000,
     esMiel: true,
+    aplicarMinimoGanancias: true,
     categoriaMinimoGanancias: "bienes",
     tipoGasto: "Miel",
     origenCampos: {},
@@ -87,6 +88,18 @@ describe("calcularRetencionGanancias", () => {
     });
     const r = calcularRetencionGanancias(f, parametros, []);
     expect(r.retencion).toBe(3800); // (300000-224000)*5%
+  });
+
+  it("no aplica ningún mínimo si el usuario lo desactiva, aunque sea la primera factura del mes", () => {
+    const f = factura({
+      neto: 300000,
+      categoriaMinimoGanancias: "bienes",
+      aplicarMinimoGanancias: false,
+    });
+    const r = calcularRetencionGanancias(f, parametros, []);
+    expect(r.esPrimera).toBe(true);
+    expect(r.minimoAplicado).toBe(0);
+    expect(r.retencion).toBe(6000); // 300000*2%, sin restar mínimo
   });
 });
 

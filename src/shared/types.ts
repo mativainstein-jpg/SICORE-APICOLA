@@ -70,6 +70,8 @@ export interface FacturaConfirmada {
   // Parámetros de cálculo de retenciones elegidos/confirmados por el usuario
   retencionIvaManual?: { pct?: number; monto?: number };
   retencionGananciasPctManual?: number;
+  /** Si es false, no se resta ningún mínimo no imponible aunque sea la primera factura del mes para el CUIT. */
+  aplicarMinimoGanancias: boolean;
   categoriaMinimoGanancias: CategoriaMinimoGanancias;
   minimoGananciasManual?: number;
 

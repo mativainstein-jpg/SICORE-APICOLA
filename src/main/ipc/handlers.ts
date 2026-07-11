@@ -9,7 +9,7 @@ import {
   rutaSicore,
   rutaApicola,
 } from "../excel/workbookStore.js";
-import { chequearDuplicado } from "../excel/duplicados.js";
+import { chequearDuplicado, chequearDuplicadoApicola } from "../excel/duplicados.js";
 import { agregarFacturaASicore, nombreHojaMesActual, COL_SICORE } from "../excel/sicoreWriter.js";
 import { agregarFacturaAApicola } from "../excel/apicolaWriter.js";
 import { extraerDatosFactura, extraerDatosDesdeImagen } from "../extraccion/parserFactura.js";
@@ -112,9 +112,11 @@ export function registrarHandlersIpc(ventanaPrincipal: () => BrowserWindow | nul
 
   ipcMain.handle(
     "factura:chequearDuplicado",
-    async (_evt, cuit: string, numeroFactura: string) => {
+    async (_evt, cuit: string, numeroFactura: string, tipoComprobante: "FCA" | "FCC") => {
       const carpeta = await requerirCarpetaDestino();
-      return chequearDuplicado(rutaSicore(carpeta), cuit, numeroFactura);
+      return tipoComprobante === "FCC"
+        ? chequearDuplicadoApicola(rutaApicola(carpeta), cuit, numeroFactura)
+        : chequearDuplicado(rutaSicore(carpeta), cuit, numeroFactura);
     },
   );
 
@@ -129,18 +131,21 @@ export function registrarHandlersIpc(ventanaPrincipal: () => BrowserWindow | nul
     const carpeta = await requerirCarpetaDestino();
     const parametros = await leerParametros();
 
-    const duplicado = await chequearDuplicado(
-      rutaSicore(carpeta),
-      factura.cuit,
-      factura.numeroFactura,
-    );
+    // Las facturas C (FCC) no se cargan en Sicore, solo en Apícola.
+    const vaASicore = factura.tipoComprobante !== "FCC";
+
+    const duplicado = vaASicore
+      ? await chequearDuplicado(rutaSicore(carpeta), factura.cuit, factura.numeroFactura)
+      : await chequearDuplicadoApicola(rutaApicola(carpeta), factura.cuit, factura.numeroFactura);
     if (duplicado.esDuplicado) {
       throw new Error(
         `Esta factura ya fue cargada antes (hoja "${duplicado.hoja}", fila ${duplicado.fila}).`,
       );
     }
 
-    const resultadoSicore = await agregarFacturaASicore(rutaSicore(carpeta), factura, parametros);
+    const resultadoSicore = vaASicore
+      ? await agregarFacturaASicore(rutaSicore(carpeta), factura, parametros)
+      : undefined;
     const resultadoApicola = await agregarFacturaAApicola(
       rutaApicola(carpeta),
       factura,

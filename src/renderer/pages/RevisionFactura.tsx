@@ -56,6 +56,7 @@ export function RevisionFactura({ facturaInicial, onConfirmada, onOmitir }: Prop
       const duplicado = await window.sicoreApi.factura.chequearDuplicado(
         factura.cuit,
         factura.numeroFactura,
+        factura.tipoComprobante,
       );
       if (duplicado.esDuplicado) {
         setError(

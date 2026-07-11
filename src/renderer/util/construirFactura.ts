@@ -29,6 +29,7 @@ export function construirFacturaDesdeExtraccion(
     total: datos.total ?? 0,
     precioFacturado: datos.precioFacturado,
     esMiel: datos.esMiel ?? false,
+    aplicarMinimoGanancias: true,
     categoriaMinimoGanancias: "bienes",
     tipoGasto: datos.esMiel ? "Miel" : "Generales",
     origenCampos,
