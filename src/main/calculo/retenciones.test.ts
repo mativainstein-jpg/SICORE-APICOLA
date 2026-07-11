@@ -58,6 +58,11 @@ describe("calcularRetencionIva", () => {
     const f = factura({ retencionIvaManual: { monto: 1234.5 } });
     expect(calcularRetencionIva(f, parametros)).toBe(1234.5);
   });
+
+  it("no aplica retención de IVA en facturas C, ni aunque se fuerce manual", () => {
+    const f = factura({ tipoComprobante: "FCC", retencionIvaManual: { monto: 1234.5 } });
+    expect(calcularRetencionIva(f, parametros)).toBe(0);
+  });
 });
 
 describe("calcularRetencionGanancias", () => {
@@ -100,6 +105,13 @@ describe("calcularRetencionGanancias", () => {
     expect(r.esPrimera).toBe(true);
     expect(r.minimoAplicado).toBe(0);
     expect(r.retencion).toBe(6000); // 300000*2%, sin restar mínimo
+  });
+
+  it("no aplica retención de Ganancias en facturas C", () => {
+    const f = factura({ neto: 300000, tipoComprobante: "FCC" });
+    const r = calcularRetencionGanancias(f, parametros, []);
+    expect(r.retencion).toBe(0);
+    expect(r.minimoAplicado).toBe(0);
   });
 });
 

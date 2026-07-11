@@ -158,6 +158,12 @@ export function FormularioDatos({ factura, setFactura }: Props) {
 
       <hr />
       <h4>Retenciones (Sicore)</h4>
+      {factura.tipoComprobante !== "FCA" ? (
+        <p>
+          Las facturas C no llevan retención de IVA ni de Ganancias (el monotributista no está
+          alcanzado). El importe a pagar es el total facturado, sin descuentos.
+        </p>
+      ) : (
       <div className="fila-campos">
         <div>
           <label>
@@ -262,6 +268,7 @@ export function FormularioDatos({ factura, setFactura }: Props) {
           </>
         )}
       </div>
+      )}
 
       <hr />
       <h4>Datos para Apícola</h4>

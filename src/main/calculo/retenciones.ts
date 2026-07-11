@@ -15,6 +15,8 @@ function redondear2(n: number): number {
 
 /**
  * Retención de IVA (columna L de Sicore, sección 5.2).
+ * Solo aplica a facturas A: los monotributistas (factura C) no sufren
+ * retención de IVA ni de Ganancias.
  * Miel: default retencion_iva_miel_pct % del Neto.
  * No-miel: default 0%.
  * En ambos casos el usuario puede forzar % o monto manual (checkbox en UI).
@@ -23,6 +25,7 @@ export function calcularRetencionIva(
   factura: FacturaConfirmada,
   parametros: ParametrosFiscales,
 ): number {
+  if (factura.tipoComprobante !== "FCA") return 0;
   if (factura.retencionIvaManual) {
     if (factura.retencionIvaManual.monto !== undefined) {
       return redondear2(factura.retencionIvaManual.monto);
@@ -65,7 +68,7 @@ export function esPrimeraFacturaDelMesParaCuit(
 }
 
 /**
- * Retención de Ganancias (columna M de Sicore).
+ * Retención de Ganancias (columna M de Sicore). Solo aplica a facturas A.
  * Default: pct de parametros sobre (Neto - minimo si es la primera factura
  * del mes para ese CUIT). Editable vía retencionGananciasPctManual.
  */
@@ -78,6 +81,9 @@ export function calcularRetencionGanancias(
     factura.cuit,
     filasYaCargadasEnHojaDelMes,
   );
+  if (factura.tipoComprobante !== "FCA") {
+    return { retencion: 0, minimoAplicado: 0, esPrimera };
+  }
   const minimoAplicado =
     esPrimera && factura.aplicarMinimoGanancias ? obtenerMinimoGanancias(factura, parametros) : 0;
   const pct =

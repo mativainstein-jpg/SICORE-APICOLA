@@ -111,6 +111,14 @@ export function App() {
         <h1>Sicore / Apícola — NAIMAN Foods</h1>
         <div style={{ display: "flex", gap: 10 }}>
           {cargadas > 0 && <span>{cargadas} factura(s) cargada(s) hoy</span>}
+          <button
+            className="secundario"
+            title={carpetaDestino}
+            disabled={cola.length > 0 || !!facturaEnRevision}
+            onClick={elegirCarpeta}
+          >
+            Cambiar carpeta
+          </button>
           <button className="secundario" onClick={() => setPantalla("configuracion")}>
             Configuración
           </button>
