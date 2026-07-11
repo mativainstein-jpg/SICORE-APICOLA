@@ -74,6 +74,11 @@ export function ArchivarFacturas({ onCerrar }: Props) {
         }));
       }
       await recargar();
+    } catch (err) {
+      setMensajes((prev) => ({
+        ...prev,
+        [grupo.cuit]: `No se pudieron archivar: ${(err as Error).message}`,
+      }));
     } finally {
       setProcesando(undefined);
     }

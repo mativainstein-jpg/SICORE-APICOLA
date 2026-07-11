@@ -62,8 +62,10 @@ const HEADERS_APICOLA = [
 const NOMBRE_HOJA = "Facturas";
 
 function sumarDias(fechaIso: string, dias: number): string {
-  const fecha = new Date(fechaIso + "T00:00:00");
-  fecha.setDate(fecha.getDate() + dias);
+  // Todo en UTC: con hora local, toISOString() puede devolver el día
+  // anterior según el huso horario de la PC.
+  const fecha = new Date(fechaIso + "T00:00:00Z");
+  fecha.setUTCDate(fecha.getUTCDate() + dias);
   return fecha.toISOString().slice(0, 10);
 }
 
@@ -147,7 +149,7 @@ export async function agregarFacturaAApicola(
     // existe; si no, también queda en blanco (nada de qué calcularlo).
     const fechaRecepcion = factura.fechaRecepcion ?? "";
     const vencimiento =
-      factura.vencimientoManual ??
+      factura.vencimientoManual ||
       (fechaRecepcion
         ? sumarDias(fechaRecepcion, parametros.vencimiento_dias_default)
         : "");

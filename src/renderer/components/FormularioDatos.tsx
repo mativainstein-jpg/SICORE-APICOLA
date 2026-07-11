@@ -12,6 +12,16 @@ const ACOPIADORES: Acopiador[] = [
   "Bender", "Hesayne", "Martínez", "Betiana", "Otro",
 ];
 
+/** Para campos numéricos opcionales: borrar el campo = sin valor (no 0). */
+function numeroOpcional(valor: string): number | undefined {
+  return valor === "" ? undefined : Number(valor);
+}
+
+/** Para fechas/textos opcionales: borrar el campo = sin valor (no ""). */
+function textoOpcional(valor: string): string | undefined {
+  return valor === "" ? undefined : valor;
+}
+
 function marcarManual<K extends keyof FacturaConfirmada>(
   setFactura: Dispatch<SetStateAction<FacturaConfirmada>>,
   campo: K,
@@ -76,7 +86,7 @@ export function FormularioDatos({ factura, setFactura }: Props) {
           <input
             type="date"
             value={factura.fechaPago ?? ""}
-            onChange={(e) => marcarManual(setFactura, "fechaPago", e.target.value)}
+            onChange={(e) => marcarManual(setFactura, "fechaPago", textoOpcional(e.target.value))}
           />
         </CampoConOrigen>
 
@@ -121,14 +131,16 @@ export function FormularioDatos({ factura, setFactura }: Props) {
           <input
             type="number"
             value={factura.kg ?? ""}
-            onChange={(e) => marcarManual(setFactura, "kg", Number(e.target.value))}
+            onChange={(e) => marcarManual(setFactura, "kg", numeroOpcional(e.target.value))}
           />
         </CampoConOrigen>
         <CampoConOrigen etiqueta="Precio facturado" origen={origen("precioFacturado")}>
           <input
             type="number"
             value={factura.precioFacturado ?? ""}
-            onChange={(e) => marcarManual(setFactura, "precioFacturado", Number(e.target.value))}
+            onChange={(e) =>
+              marcarManual(setFactura, "precioFacturado", numeroOpcional(e.target.value))
+            }
           />
         </CampoConOrigen>
 
@@ -293,7 +305,7 @@ export function FormularioDatos({ factura, setFactura }: Props) {
             type="date"
             value={factura.fechaRecepcion ?? ""}
             onChange={(e) =>
-              setFactura((prev) => ({ ...prev, fechaRecepcion: e.target.value }))
+              setFactura((prev) => ({ ...prev, fechaRecepcion: textoOpcional(e.target.value) }))
             }
           />
         </CampoConOrigen>
@@ -302,7 +314,10 @@ export function FormularioDatos({ factura, setFactura }: Props) {
             type="date"
             value={factura.vencimientoManual ?? ""}
             onChange={(e) =>
-              setFactura((prev) => ({ ...prev, vencimientoManual: e.target.value }))
+              setFactura((prev) => ({
+                ...prev,
+                vencimientoManual: textoOpcional(e.target.value),
+              }))
             }
           />
         </CampoConOrigen>
@@ -357,7 +372,7 @@ export function FormularioDatos({ factura, setFactura }: Props) {
             type="number"
             value={factura.controlKilos ?? ""}
             onChange={(e) =>
-              setFactura((prev) => ({ ...prev, controlKilos: Number(e.target.value) }))
+              setFactura((prev) => ({ ...prev, controlKilos: numeroOpcional(e.target.value) }))
             }
           />
         </CampoConOrigen>

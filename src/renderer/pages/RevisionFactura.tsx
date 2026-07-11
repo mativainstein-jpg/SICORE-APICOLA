@@ -32,21 +32,29 @@ export function RevisionFactura({ facturaInicial, onConfirmada, onOmitir }: Prop
   useEffect(() => {
     setCalculando(true);
     setRetenciones(undefined);
+    // El timeout se cancela al editar de nuevo, pero un pedido que ya salió
+    // no: esta marca evita que una respuesta vieja (de la edición anterior)
+    // llegue tarde y pise el cálculo de lo que se ve ahora en pantalla.
+    let cancelado = false;
     const timeout = setTimeout(async () => {
       try {
         const r = await window.sicoreApi.factura.previsualizarRetenciones(factura);
+        if (cancelado) return;
         setRetenciones(r);
         setError(undefined);
       } catch (e) {
         // Importante: no dejar el cálculo de la factura anterior en pantalla
         // si este falla (ej. Excel abierto en otro programa) — mejor mostrar
         // el error que mostrar un número que no corresponde a esta factura.
-        setError((e as Error).message);
+        if (!cancelado) setError((e as Error).message);
       } finally {
-        setCalculando(false);
+        if (!cancelado) setCalculando(false);
       }
     }, 250);
-    return () => clearTimeout(timeout);
+    return () => {
+      cancelado = true;
+      clearTimeout(timeout);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [factura]);
 

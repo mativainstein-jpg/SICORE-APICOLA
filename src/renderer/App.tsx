@@ -20,6 +20,7 @@ export function App() {
   const [avisoActualizacion, setAvisoActualizacion] = useState<string>();
   const [cargadas, setCargadas] = useState(0);
   const [pendientesDeArchivar, setPendientesDeArchivar] = useState(0);
+  const [errorExtraccion, setErrorExtraccion] = useState<string>();
 
   useEffect(() => {
     window.sicoreApi.carpeta.obtenerDestino().then((c) => {
@@ -58,6 +59,7 @@ export function App() {
   async function cargarFacturas() {
     const archivos = await window.sicoreApi.factura.seleccionarArchivos();
     if (archivos.length > 0) {
+      setErrorExtraccion(undefined);
       setCola((prev) => [...prev, ...archivos]);
       setPantalla("carga");
     }
@@ -88,6 +90,16 @@ export function App() {
       setFacturaEnRevision(construirFacturaDesdeExtraccion(siguiente, datos));
       setCola(resto);
       setPantalla("revision");
+    } catch (err) {
+      // Si un archivo no se puede leer (dañado, sin permisos, etc.) hay que
+      // sacarlo de la cola igual: si quedara, este efecto lo reintentaría
+      // en un bucle infinito. Se avisa y se sigue con el resto de la tanda.
+      const nombre = siguiente.split(/[\\/]/).pop() ?? siguiente;
+      setErrorExtraccion(
+        `No se pudo leer "${nombre}" (${(err as Error).message}). Se salteó esa factura; podés volver a cargarla o cargarla a mano.`,
+      );
+      setCola(resto);
+      if (resto.length === 0) setPantalla("carga");
     } finally {
       setExtrayendo(false);
     }
@@ -153,6 +165,14 @@ export function App() {
       </header>
 
       {avisoActualizacion && <div className="error-banner">{avisoActualizacion}</div>}
+      {errorExtraccion && (
+        <div className="error-banner">
+          {errorExtraccion}{" "}
+          <button className="secundario" onClick={() => setErrorExtraccion(undefined)}>
+            Entendido
+          </button>
+        </div>
+      )}
 
       <div className="contenido">
         {pantalla === "configuracion" && (

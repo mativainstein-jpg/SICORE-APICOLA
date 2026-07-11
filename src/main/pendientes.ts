@@ -33,8 +33,11 @@ export async function agregarPendiente(
   item: FacturaPendienteDeArchivar,
 ): Promise<void> {
   const lista = await leerPendientes(carpetaDestino);
-  lista.push(item);
-  await guardarPendientes(carpetaDestino, lista);
+  // Un mismo archivo no puede figurar dos veces (solo existe una vez en el
+  // disco): si ya estaba anotado, se reemplaza la entrada por la nueva.
+  const sinRepetido = lista.filter((f) => f.rutaOriginal !== item.rutaOriginal);
+  sinRepetido.push(item);
+  await guardarPendientes(carpetaDestino, sinRepetido);
 }
 
 export function listarPendientes(carpetaDestino: string): Promise<FacturaPendienteDeArchivar[]> {
