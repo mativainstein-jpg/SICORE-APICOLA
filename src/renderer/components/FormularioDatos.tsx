@@ -49,7 +49,7 @@ export function FormularioDatos({ factura, setFactura }: Props) {
         </label>
       </div>
 
-      {factura.esMiel && (
+      {factura.esMiel && factura.tipoComprobante === "FCA" && (
         <div style={{ marginBottom: 16 }}>
           <label>
             <input

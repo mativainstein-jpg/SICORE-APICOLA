@@ -14,6 +14,7 @@ import { agregarFacturaASicore, nombreHojaMesActual, COL_SICORE } from "../excel
 import { agregarFacturaAApicola } from "../excel/apicolaWriter.js";
 import { extraerDatosFactura, extraerDatosDesdeImagen } from "../extraccion/parserFactura.js";
 import { guardarCaptura } from "../capturas.js";
+import { moverFacturaAProcesadas } from "../archivo.js";
 import { calcularRetenciones, type FilaCargada } from "../calculo/retenciones.js";
 import type { FacturaConfirmada, ParametrosFiscales } from "../../shared/types.js";
 
@@ -152,7 +153,18 @@ export function registrarHandlersIpc(ventanaPrincipal: () => BrowserWindow | nul
       parametros,
     );
 
-    return { sicore: resultadoSicore, apicola: resultadoApicola };
+    // Ya se guardó en los Excel: movemos el archivo original a "Facturas
+    // procesadas" para que no quede mezclado con los pendientes de cargar.
+    // Si falla (el archivo ya no está ahí, está bloqueado, etc.) no se
+    // revierte nada: los datos ya quedaron guardados.
+    let archivoMovidoA: string | undefined;
+    try {
+      archivoMovidoA = await moverFacturaAProcesadas(carpeta, factura.archivoOriginal);
+    } catch (err) {
+      console.error("No se pudo mover la factura a 'Facturas procesadas':", err);
+    }
+
+    return { sicore: resultadoSicore, apicola: resultadoApicola, archivoMovidoA };
   });
 
   ipcMain.handle(

@@ -127,6 +127,11 @@ describe("calcularAPlazo", () => {
     const f = factura({ esMiel: true, neto: 60000, aplicarAPlazo: false });
     expect(calcularAPlazo(f, parametros)).toBe(0);
   });
+
+  it("nunca aplica en facturas C, aunque sea miel y supere el umbral", () => {
+    const f = factura({ esMiel: true, neto: 60000, tipoComprobante: "FCC" });
+    expect(calcularAPlazo(f, parametros)).toBe(0);
+  });
 });
 
 describe("calcularRetenciones", () => {
