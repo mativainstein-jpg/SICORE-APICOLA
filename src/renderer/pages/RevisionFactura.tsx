@@ -103,6 +103,20 @@ export function RevisionFactura({ facturaInicial, onConfirmada, onOmitir }: Prop
               {confirmando ? "Guardando…" : "Confirmar y guardar"}
             </button>
           </div>
+
+          {factura.textoReconocido !== undefined && (
+            <details className="panel">
+              <summary style={{ cursor: "pointer" }}>
+                Texto reconocido (para soporte, si algo no se completó solo)
+              </summary>
+              <textarea
+                readOnly
+                value={factura.textoReconocido || "(no se reconoció ningún texto)"}
+                style={{ width: "100%", height: 160, marginTop: 8, fontFamily: "monospace" }}
+                onFocus={(e) => e.currentTarget.select()}
+              />
+            </details>
+          )}
         </div>
       </div>
     </div>

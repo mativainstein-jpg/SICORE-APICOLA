@@ -91,6 +91,8 @@ export interface FacturaConfirmada {
   vencimientoManual?: string;
 
   origenCampos: Partial<Record<keyof DatosExtraidos, "factura" | "manual">>;
+  /** Texto reconocido por el motor de extracción (para diagnosticar por qué no detectó algún campo). No se guarda en el Excel. */
+  textoReconocido?: string;
 }
 
 export interface RetencionesCalculadas {

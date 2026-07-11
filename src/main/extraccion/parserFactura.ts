@@ -68,13 +68,18 @@ export function parsearCamposDesdeTexto(texto: string): Omit<
     ? nombreProveedorTexto.split(PROXIMA_ETIQUETA)[0].trim()
     : undefined;
 
-  const netoTexto = buscar(/Importe\s*Neto\s*Gravado\s*:?\s*\$?\s*([\d.,]+)/i, texto);
+  const netoTexto =
+    buscar(/(?:Importe\s*)?Neto\s*Gravado\s*:?\s*\$?\s*([\d.,]+)/i, texto) ??
+    buscar(/(?:Importe\s*)?Neto\s*:?\s*\$?\s*([\d.,]+)/i, texto) ??
+    buscar(/Subtotal\s*:?\s*\$?\s*([\d.,]+)/i, texto);
   const noGravadoTexto = buscar(/Importe\s*(?:Neto\s*)?No\s*Gravado\s*:?\s*\$?\s*([\d.,]+)/i, texto);
   const ivaTexto = buscar(/(?:IVA|I\.V\.A\.)\s*(?:21\s*%|10[.,]5\s*%)?\s*:?\s*\$?\s*([\d.,]+)/i, texto);
   const percepcionesTexto = buscar(/Percepci[oó]n(?:es)?[^:\n]*:?\s*\$?\s*([\d.,]+)/i, texto);
   const totalTexto = buscar(/Importe\s*Total\s*:?\s*\$?\s*([\d.,]+)/i, texto);
   const kgTexto = buscar(/(\d[\d.,]*)\s*Kg\b/i, texto);
-  const precioTexto = buscar(/Precio\s*(?:Unitario|por\s*Kg)?\s*:?\s*\$?\s*([\d.,]+)/i, texto);
+  const precioTexto =
+    buscar(/Precio\s*(?:Unitario|por\s*Kg|x\s*Kg|Unit\.?)?\s*:?\s*\$?\s*([\d.,]+)/i, texto) ??
+    buscar(/P\.?\s*Unit(?:ario|\.)?\s*:?\s*\$?\s*([\d.,]+)/i, texto);
 
   return {
     fechaEmision: parsearFechaAAAAMMDD(fechaEmisionTexto),

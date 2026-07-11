@@ -33,6 +33,7 @@ export function construirFacturaDesdeExtraccion(
     categoriaMinimoGanancias: "bienes",
     tipoGasto: datos.esMiel ? "Miel" : "Generales",
     origenCampos,
+    textoReconocido: datos.textoCompleto,
   };
 }
 
