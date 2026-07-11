@@ -110,6 +110,18 @@ export function calcularAPlazo(
 }
 
 /**
+ * Suma de descuentos adicionales (ej. adelantos ya pagados) que el usuario
+ * carga a mano en la previsualización/captura. Se restan del Importe a
+ * pagar de Apícola, no de la columna O de Sicore (esa es la fórmula fiscal
+ * fija de la sección 5.2, no se toca).
+ */
+export function sumaDescuentosAdicionales(factura: FacturaConfirmada): number {
+  return redondear2(
+    factura.descuentosAdicionales.reduce((suma, d) => suma + (d.monto || 0), 0),
+  );
+}
+
+/**
  * Cálculo completo de retenciones para una factura, usado tanto por
  * Sicore (columna O) como de forma independiente por Apícola (columna I) —
  * ver decisión de sección 8.5: Apícola nunca lee Sicore.xlsx.

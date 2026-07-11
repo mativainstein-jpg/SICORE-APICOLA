@@ -2,9 +2,13 @@ import ExcelJS from "exceljs";
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import type { FacturaConfirmada, ParametrosFiscales } from "../../shared/types.js";
-import { calcularRetenciones } from "../calculo/retenciones.js";
+import { calcularRetenciones, sumaDescuentosAdicionales } from "../calculo/retenciones.js";
 import { conArchivoBloqueado } from "./lock.js";
 import { backupAntesDeEscribir } from "./backup.js";
+
+function redondear2(n: number): number {
+  return Math.round((n + Number.EPSILON) * 100) / 100;
+}
 
 /** Columnas de Apicola.xlsx, sección 6. Una única hoja "Facturas". */
 export const COL_APICOLA = {
@@ -122,6 +126,20 @@ export async function agregarFacturaAApicola(
     // al revisar la factura (factura.categoriaMinimoGanancias ya refleja
     // la decisión tomada en la pantalla de revisión).
     const retenciones = calcularRetenciones(factura, parametros, []);
+    const descuentos = sumaDescuentosAdicionales(factura);
+    const importeAPagar = redondear2(retenciones.aPagar - descuentos);
+
+    const comentariosConDescuentos =
+      factura.descuentosAdicionales.length > 0
+        ? [
+            factura.comentarios,
+            `Descuentos: ${factura.descuentosAdicionales
+              .map((d) => `${d.concepto} ($${d.monto})`)
+              .join(", ")}`,
+          ]
+            .filter(Boolean)
+            .join(" — ")
+        : factura.comentarios ?? "";
 
     const fechaRecepcion = factura.fechaRecepcion ?? factura.fechaEmision;
     const vencimiento =
@@ -139,8 +157,8 @@ export async function agregarFacturaAApicola(
       factura.numeroFactura,
       factura.tipoComprobante,
       factura.cuit,
-      factura.comentarios ?? "",
-      retenciones.aPagar,
+      comentariosConDescuentos,
+      importeAPagar,
       factura.tipoGasto,
       factura.controlKilos ?? "",
       null, // Saldo: fórmula K - O, seteada abajo

@@ -4,6 +4,7 @@ import {
   calcularRetenciones,
   calcularRetencionGanancias,
   calcularRetencionIva,
+  sumaDescuentosAdicionales,
 } from "./retenciones.js";
 import type { FacturaConfirmada, ParametrosFiscales } from "../../shared/types.js";
 
@@ -35,6 +36,7 @@ function factura(overrides: Partial<FacturaConfirmada> = {}): FacturaConfirmada 
     aplicarMinimoGanancias: true,
     categoriaMinimoGanancias: "bienes",
     aplicarAPlazo: true,
+    descuentosAdicionales: [],
     tipoGasto: "Miel",
     origenCampos: {},
     ...overrides,
@@ -131,6 +133,22 @@ describe("calcularAPlazo", () => {
   it("nunca aplica en facturas C, aunque sea miel y supere el umbral", () => {
     const f = factura({ esMiel: true, neto: 60000, tipoComprobante: "FCC" });
     expect(calcularAPlazo(f, parametros)).toBe(0);
+  });
+});
+
+describe("sumaDescuentosAdicionales", () => {
+  it("suma los montos de los descuentos cargados (ej. adelantos)", () => {
+    const f = factura({
+      descuentosAdicionales: [
+        { concepto: "Adelanto 01/07", monto: 5000 },
+        { concepto: "Adelanto 05/07", monto: 2500.5 },
+      ],
+    });
+    expect(sumaDescuentosAdicionales(f)).toBe(7500.5);
+  });
+
+  it("da 0 si no hay descuentos cargados", () => {
+    expect(sumaDescuentosAdicionales(factura())).toBe(0);
   });
 });
 

@@ -118,6 +118,10 @@ export function RevisionFactura({ facturaInicial, onConfirmada, onOmitir }: Prop
             cargando={calculando}
             notas={notasCaptura}
             onCambiarNotas={setNotasCaptura}
+            descuentos={factura.descuentosAdicionales}
+            onCambiarDescuentos={(descuentosAdicionales) =>
+              setFactura((prev) => ({ ...prev, descuentosAdicionales }))
+            }
           />
           <div className="acciones-formulario">
             <button className="secundario" onClick={onOmitir} disabled={confirmando}>

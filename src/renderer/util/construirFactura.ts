@@ -32,6 +32,7 @@ export function construirFacturaDesdeExtraccion(
     aplicarMinimoGanancias: true,
     categoriaMinimoGanancias: "bienes",
     aplicarAPlazo: true,
+    descuentosAdicionales: [],
     tipoGasto: datos.esMiel ? "Miel" : "Generales",
     origenCampos,
     textoReconocido: datos.textoCompleto,

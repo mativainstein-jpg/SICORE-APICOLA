@@ -76,6 +76,8 @@ export interface FacturaConfirmada {
   minimoGananciasManual?: number;
   /** Si es false, "A Plazo" da $0 aunque sea miel y el Neto supere el umbral configurado. */
   aplicarAPlazo: boolean;
+  /** Descuentos adicionales (ej. adelantos ya pagados) que se restan del A Pagar, en la previsualización/captura y en el Importe a pagar de Apícola. */
+  descuentosAdicionales: { concepto: string; monto: number }[];
 
   // Campos de Apícola
   banco?: string;
