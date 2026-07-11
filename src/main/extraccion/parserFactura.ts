@@ -58,7 +58,15 @@ export function parsearCamposDesdeTexto(texto: string): Omit<
   const numeroFacturaTexto =
     buscar(/(?:Comp\.?\s*Nro|N[uú]mero|Factura)\s*:?\s*(\d{4,5}[\-\s]?\d{4,8})/i, texto) ??
     buscar(/(\b\d{4,5}-\d{8}\b)/, texto);
-  const nombreProveedor = buscar(/Raz[oó]n\s*Social\s*:?\s*([^\n]+)/i, texto);
+  // Corta antes de la próxima etiqueta conocida de la factura, no solo en el
+  // salto de línea: el texto de OCR suele venir sin saltos de línea limpios
+  // y si no, "Nombre del proveedor" termina incluyendo el campo siguiente.
+  const PROXIMA_ETIQUETA =
+    /(?:Fecha\s*de\s*Emisi[oó]n|C\.?U\.?I\.?T|Domicilio|Cond(?:ici[oó]n)?|IVA|Comp\.?\s*Nro|N[uú]mero|Factura|Punto\s*de\s*Venta)\b/i;
+  const nombreProveedorTexto = buscar(/Raz[oó]n\s*Social\s*:?\s*([^\n]+)/i, texto);
+  const nombreProveedor = nombreProveedorTexto
+    ? nombreProveedorTexto.split(PROXIMA_ETIQUETA)[0].trim()
+    : undefined;
 
   const netoTexto = buscar(/Importe\s*Neto\s*Gravado\s*:?\s*\$?\s*([\d.,]+)/i, texto);
   const noGravadoTexto = buscar(/Importe\s*(?:Neto\s*)?No\s*Gravado\s*:?\s*\$?\s*([\d.,]+)/i, texto);

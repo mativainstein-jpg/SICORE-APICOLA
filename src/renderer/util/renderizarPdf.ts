@@ -10,16 +10,10 @@ function base64ABytes(base64: string): Uint8Array {
   return bytes;
 }
 
-/**
- * Renderiza la primera página de un PDF (recibido como base64) a un PNG en
- * base64, usando el <canvas> del navegador. Se usa para poder pasar por OCR
- * las facturas escaneadas sin capa de texto, sin depender de librerías
- * nativas en el proceso principal.
- */
-export async function renderizarPrimeraPaginaComoPng(pdfBase64: string): Promise<string> {
+async function renderizarPagina(pdfBase64: string, numeroPagina: number, escala: number): Promise<string> {
   const doc = await pdfjsLib.getDocument({ data: base64ABytes(pdfBase64) }).promise;
-  const pagina = await doc.getPage(1);
-  const viewport = pagina.getViewport({ scale: 2.5 });
+  const pagina = await doc.getPage(numeroPagina);
+  const viewport = pagina.getViewport({ scale: escala });
 
   const canvas = document.createElement("canvas");
   canvas.width = viewport.width;
@@ -29,4 +23,24 @@ export async function renderizarPrimeraPaginaComoPng(pdfBase64: string): Promise
 
   await pagina.render({ canvasContext: contexto, viewport }).promise;
   return canvas.toDataURL("image/png");
+}
+
+/**
+ * Renderiza la primera página de un PDF (recibido como base64) a un PNG en
+ * base64, en alta resolución. Se usa para poder pasar por OCR las facturas
+ * escaneadas sin capa de texto, sin depender de librerías nativas en el
+ * proceso principal.
+ */
+export function renderizarPrimeraPaginaComoPng(pdfBase64: string): Promise<string> {
+  return renderizarPagina(pdfBase64, 1, 2.5);
+}
+
+/**
+ * Renderiza la primera página de un PDF para mostrarla en el panel de
+ * previsualización (resolución más liviana que la usada para OCR). Se
+ * prefiere esto por sobre un <embed file://...>, que en Windows/modo
+ * desarrollo no siempre carga.
+ */
+export function renderizarPrimeraPaginaParaVista(pdfBase64: string): Promise<string> {
+  return renderizarPagina(pdfBase64, 1, 1.5);
 }

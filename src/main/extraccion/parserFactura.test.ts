@@ -31,6 +31,14 @@ describe("parsearCamposDesdeTexto", () => {
   });
 });
 
+describe("parsearCamposDesdeTexto - texto de OCR sin saltos de línea limpios", () => {
+  it("no incluye el campo siguiente dentro del nombre del proveedor", () => {
+    const texto = "Razón Social: VARGAS BALTAZAR Fecha de Emisión: 06/07/2026 C.U.I.T.: 20-12345678-9";
+    const datos = parsearCamposDesdeTexto(texto);
+    expect(datos.nombreProveedor).toBe("VARGAS BALTAZAR");
+  });
+});
+
 describe("detectarEsMiel", () => {
   it("detecta miel por palabras clave", () => {
     expect(detectarEsMiel("Venta de miel a granel")).toBe(true);
