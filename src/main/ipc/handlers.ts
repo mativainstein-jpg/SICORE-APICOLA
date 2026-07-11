@@ -6,6 +6,8 @@ import { verificarClaveAdmin, cambiarClaveAdmin } from "../config/admin.js";
 import {
   leerCarpetaDestino,
   guardarCarpetaDestino,
+  obtenerCarpetaProveedor,
+  guardarCarpetaProveedor,
   rutaSicore,
   rutaApicola,
 } from "../excel/workbookStore.js";
@@ -14,7 +16,7 @@ import { agregarFacturaASicore, nombreHojaMesActual, COL_SICORE } from "../excel
 import { agregarFacturaAApicola } from "../excel/apicolaWriter.js";
 import { extraerDatosFactura, extraerDatosDesdeImagen } from "../extraccion/parserFactura.js";
 import { guardarCaptura } from "../capturas.js";
-import { moverFacturaAProcesadas } from "../archivo.js";
+import { moverFacturaACarpeta } from "../archivo.js";
 import { calcularRetenciones, type FilaCargada } from "../calculo/retenciones.js";
 import type { FacturaConfirmada, ParametrosFiscales } from "../../shared/types.js";
 
@@ -85,6 +87,31 @@ export function registrarHandlersIpc(ventanaPrincipal: () => BrowserWindow | nul
     return carpeta;
   });
 
+  ipcMain.handle("proveedor:obtenerCarpeta", async (_evt, cuit: string) =>
+    obtenerCarpetaProveedor(cuit),
+  );
+
+  ipcMain.handle(
+    "proveedor:elegirCarpeta",
+    async (_evt, cuit: string, nombreProveedorSugerido: string) => {
+      const ventana = ventanaPrincipal();
+      if (!ventana) return undefined;
+      // Arranca en la última carpeta usada para este proveedor, si hay una,
+      // para no tener que navegar desde cero cada vez — pero siempre deja
+      // elegir/confirmar, nunca mueve el archivo sin preguntar.
+      const carpetaAnterior = await obtenerCarpetaProveedor(cuit);
+      const resultado = await dialog.showOpenDialog(ventana, {
+        title: `Elegí la carpeta del servidor para ${nombreProveedorSugerido || "este proveedor"}`,
+        defaultPath: carpetaAnterior,
+        properties: ["openDirectory", "createDirectory"],
+      });
+      if (resultado.canceled || resultado.filePaths.length === 0) return undefined;
+      const carpeta = resultado.filePaths[0];
+      await guardarCarpetaProveedor(cuit, carpeta);
+      return carpeta;
+    },
+  );
+
   ipcMain.handle("factura:seleccionarArchivos", async () => {
     const ventana = ventanaPrincipal();
     if (!ventana) return [];
@@ -128,44 +155,52 @@ export function registrarHandlersIpc(ventanaPrincipal: () => BrowserWindow | nul
     return calcularRetenciones(factura, parametros, filas);
   });
 
-  ipcMain.handle("factura:confirmar", async (_evt, factura: FacturaConfirmada) => {
-    const carpeta = await requerirCarpetaDestino();
-    const parametros = await leerParametros();
+  ipcMain.handle(
+    "factura:confirmar",
+    async (_evt, factura: FacturaConfirmada, carpetaArchivoProveedor: string | undefined) => {
+      const carpeta = await requerirCarpetaDestino();
+      const parametros = await leerParametros();
 
-    // Las facturas C (FCC) no se cargan en Sicore, solo en Apícola.
-    const vaASicore = factura.tipoComprobante !== "FCC";
+      // Las facturas C (FCC) no se cargan en Sicore, solo en Apícola.
+      const vaASicore = factura.tipoComprobante !== "FCC";
 
-    const duplicado = vaASicore
-      ? await chequearDuplicado(rutaSicore(carpeta), factura.cuit, factura.numeroFactura)
-      : await chequearDuplicadoApicola(rutaApicola(carpeta), factura.cuit, factura.numeroFactura);
-    if (duplicado.esDuplicado) {
-      throw new Error(
-        `Esta factura ya fue cargada antes (hoja "${duplicado.hoja}", fila ${duplicado.fila}).`,
+      const duplicado = vaASicore
+        ? await chequearDuplicado(rutaSicore(carpeta), factura.cuit, factura.numeroFactura)
+        : await chequearDuplicadoApicola(rutaApicola(carpeta), factura.cuit, factura.numeroFactura);
+      if (duplicado.esDuplicado) {
+        throw new Error(
+          `Esta factura ya fue cargada antes (hoja "${duplicado.hoja}", fila ${duplicado.fila}).`,
+        );
+      }
+
+      const resultadoSicore = vaASicore
+        ? await agregarFacturaASicore(rutaSicore(carpeta), factura, parametros)
+        : undefined;
+      const resultadoApicola = await agregarFacturaAApicola(
+        rutaApicola(carpeta),
+        factura,
+        parametros,
       );
-    }
 
-    const resultadoSicore = vaASicore
-      ? await agregarFacturaASicore(rutaSicore(carpeta), factura, parametros)
-      : undefined;
-    const resultadoApicola = await agregarFacturaAApicola(
-      rutaApicola(carpeta),
-      factura,
-      parametros,
-    );
+      // Ya se guardó en los Excel. Si el usuario eligió una carpeta del
+      // proveedor (siempre se le pregunta, nunca se mueve solo), el
+      // archivo original se mueve ahí. Si no eligió ninguna (canceló el
+      // selector), el archivo se deja donde estaba.
+      let archivoMovidoA: string | undefined;
+      if (carpetaArchivoProveedor) {
+        try {
+          archivoMovidoA = await moverFacturaACarpeta(
+            carpetaArchivoProveedor,
+            factura.archivoOriginal,
+          );
+        } catch (err) {
+          console.error("No se pudo mover la factura a la carpeta del proveedor:", err);
+        }
+      }
 
-    // Ya se guardó en los Excel: movemos el archivo original a "Facturas
-    // procesadas" para que no quede mezclado con los pendientes de cargar.
-    // Si falla (el archivo ya no está ahí, está bloqueado, etc.) no se
-    // revierte nada: los datos ya quedaron guardados.
-    let archivoMovidoA: string | undefined;
-    try {
-      archivoMovidoA = await moverFacturaAProcesadas(carpeta, factura.archivoOriginal);
-    } catch (err) {
-      console.error("No se pudo mover la factura a 'Facturas procesadas':", err);
-    }
-
-    return { sicore: resultadoSicore, apicola: resultadoApicola, archivoMovidoA };
-  });
+      return { sicore: resultadoSicore, apicola: resultadoApicola, archivoMovidoA };
+    },
+  );
 
   ipcMain.handle(
     "captura:guardar",

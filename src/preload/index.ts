@@ -44,8 +44,8 @@ const api = {
       ipcRenderer.invoke("factura:chequearDuplicado", cuit, numeroFactura, tipoComprobante),
     previsualizarRetenciones: (factura: FacturaConfirmada): Promise<RetencionesCalculadas> =>
       ipcRenderer.invoke("factura:previsualizarRetenciones", factura),
-    confirmar: (factura: FacturaConfirmada): Promise<unknown> =>
-      ipcRenderer.invoke("factura:confirmar", factura),
+    confirmar: (factura: FacturaConfirmada, carpetaArchivoProveedor?: string): Promise<unknown> =>
+      ipcRenderer.invoke("factura:confirmar", factura, carpetaArchivoProveedor),
   },
   captura: {
     guardar: (rutaFacturaOriginal: string, pngDataUrl: string): Promise<string> =>
@@ -54,6 +54,12 @@ const api = {
   archivo: {
     leerBase64: (rutaArchivo: string): Promise<string> =>
       ipcRenderer.invoke("archivo:leerBase64", rutaArchivo),
+  },
+  proveedor: {
+    obtenerCarpeta: (cuit: string): Promise<string | undefined> =>
+      ipcRenderer.invoke("proveedor:obtenerCarpeta", cuit),
+    elegirCarpeta: (cuit: string, nombreProveedorSugerido: string): Promise<string | undefined> =>
+      ipcRenderer.invoke("proveedor:elegirCarpeta", cuit, nombreProveedorSugerido),
   },
   actualizaciones: {
     onListaParaInstalar: (callback: (mensaje: string) => void): void => {

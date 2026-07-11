@@ -2,30 +2,27 @@ import { promises as fs } from "node:fs";
 import path from "node:path";
 
 /**
- * Mueve el archivo original de la factura ya cargada a una carpeta
- * "Facturas procesadas" dentro de la carpeta destino, para que no quede
- * mezclado con las facturas todavía pendientes de cargar. Se usa copiar +
- * borrar (no fs.rename) porque el archivo original puede estar en otra
- * unidad/disco (ej. Descargas en C:, carpeta destino en un disco de red).
+ * Mueve el archivo original de la factura ya cargada a la carpeta del
+ * proveedor en el servidor (elegida por el usuario, sección "carpeta por
+ * proveedor"). Se usa copiar + borrar (no fs.rename) porque el archivo
+ * original puede estar en otra unidad/disco que la carpeta destino.
  */
-export async function moverFacturaAProcesadas(
+export async function moverFacturaACarpeta(
   carpetaDestino: string,
   rutaOriginal: string,
 ): Promise<string> {
-  const carpetaProcesadas = path.join(carpetaDestino, "Facturas procesadas");
-  await fs.mkdir(carpetaProcesadas, { recursive: true });
+  await fs.mkdir(carpetaDestino, { recursive: true });
 
   const nombreBase = path.basename(rutaOriginal, path.extname(rutaOriginal));
   const ext = path.extname(rutaOriginal);
-  let destino = path.join(carpetaProcesadas, `${nombreBase}${ext}`);
+  let destino = path.join(carpetaDestino, `${nombreBase}${ext}`);
 
   try {
     await fs.access(destino);
     // Ya existe un archivo con ese nombre: se agrega un sufijo con la hora
-    // para no pisarlo (puede pasar si dos proveedores mandan un archivo
-    // con el mismo nombre, ej. "factura.pdf").
+    // para no pisarlo.
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    destino = path.join(carpetaProcesadas, `${nombreBase}.${timestamp}${ext}`);
+    destino = path.join(carpetaDestino, `${nombreBase}.${timestamp}${ext}`);
   } catch {
     // no existe, se puede usar el nombre tal cual
   }
