@@ -34,6 +34,7 @@ function factura(overrides: Partial<FacturaConfirmada> = {}): FacturaConfirmada 
     esMiel: true,
     aplicarMinimoGanancias: true,
     categoriaMinimoGanancias: "bienes",
+    aplicarAPlazo: true,
     tipoGasto: "Miel",
     origenCampos: {},
     ...overrides,
@@ -120,6 +121,11 @@ describe("calcularAPlazo", () => {
     expect(calcularAPlazo(factura({ esMiel: true, neto: 60000 }), parametros)).toBe(2700);
     expect(calcularAPlazo(factura({ esMiel: true, neto: 50000 }), parametros)).toBe(0);
     expect(calcularAPlazo(factura({ esMiel: false, neto: 60000 }), parametros)).toBe(0);
+  });
+
+  it("da $0 si el usuario destilda 'Es a plazo', aunque sea miel y supere el umbral", () => {
+    const f = factura({ esMiel: true, neto: 60000, aplicarAPlazo: false });
+    expect(calcularAPlazo(f, parametros)).toBe(0);
   });
 });
 

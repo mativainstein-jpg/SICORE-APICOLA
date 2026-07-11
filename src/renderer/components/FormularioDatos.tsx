@@ -49,6 +49,21 @@ export function FormularioDatos({ factura, setFactura }: Props) {
         </label>
       </div>
 
+      {factura.esMiel && (
+        <div style={{ marginBottom: 16 }}>
+          <label>
+            <input
+              type="checkbox"
+              checked={factura.aplicarAPlazo}
+              onChange={(e) =>
+                setFactura((prev) => ({ ...prev, aplicarAPlazo: e.target.checked }))
+              }
+            />{" "}
+            Es a plazo (solo aplica si además el Neto supera el mínimo configurado)
+          </label>
+        </div>
+      )}
+
       <div className="fila-campos">
         <CampoConOrigen etiqueta="Fecha de emisión" origen={origen("fechaEmision")}>
           <input

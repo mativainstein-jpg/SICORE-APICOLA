@@ -10,7 +10,7 @@ const DEFAULTS: ParametrosFiscales = {
   minimo_honorarios: 160000,
   minimo_servicios_transporte: 67170,
   aplazo_pct: 4.5,
-  aplazo_umbral_neto: 50000,
+  aplazo_umbral_neto: 70000,
   vencimiento_dias_default: 7,
 };
 

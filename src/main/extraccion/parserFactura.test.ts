@@ -22,12 +22,27 @@ describe("parsearCamposDesdeTexto", () => {
     const datos = parsearCamposDesdeTexto(TEXTO_FACTURA_EJEMPLO);
     expect(datos.fechaEmision).toBe("2026-07-05");
     expect(datos.cuit).toBe("30710442948");
+    expect(datos.numeroFactura).toBe("0001-00012345");
     expect(datos.tipoComprobante).toBe("FCA");
     expect(datos.neto).toBe(100000);
-    expect(datos.ivaMonto).toBe(21000);
+    // El IVA se calcula (no se lee del texto): en miel, 10,5% del Neto.
+    expect(datos.ivaMonto).toBe(10500);
     expect(datos.total).toBe(121500);
     expect(datos.kg).toBe(1500);
     expect(datos.esMiel).toBe(true);
+  });
+
+  it("calcula el IVA como Total - Neto cuando no es miel", () => {
+    const texto = `
+FACTURA A
+Fecha de Emisión: 05/07/2026
+C.U.I.T.: 30-71044294-8
+Importe Neto Gravado: $ 100.000,00
+Importe Total: $ 121.000,00
+`;
+    const datos = parsearCamposDesdeTexto(texto);
+    expect(datos.esMiel).toBe(false);
+    expect(datos.ivaMonto).toBe(21000);
   });
 });
 

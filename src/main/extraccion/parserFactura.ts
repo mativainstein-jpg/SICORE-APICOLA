@@ -12,6 +12,10 @@ function parsearMonto(texto: string | undefined): number | undefined {
   return Number.isFinite(n) ? n : undefined;
 }
 
+function redondear2(n: number): number {
+  return Math.round((n + Number.EPSILON) * 100) / 100;
+}
+
 function buscar(regex: RegExp, texto: string): string | undefined {
   const m = texto.match(regex);
   return m?.[1]?.trim();
@@ -81,9 +85,17 @@ export function parsearCamposDesdeTexto(texto: string): Omit<
 > {
   const fechaEmisionTexto = buscar(/Fecha\s*de\s*Emisi[oó]n\s*:?\s*([\d/\-]+)/i, texto);
   const cuitTexto = buscar(/C\.?U\.?I\.?T\.?\s*(?:N[°ºo]?)?\s*:?\s*([\d\-.]{11,14})/i, texto);
+  // AFIP suele mostrar "Punto de Venta" y "Comp. Nro" como dos campos
+  // separados (no un solo "0001-00000001" corrido); si aparecen así, se
+  // arma el número combinándolos con el relleno de ceros habitual.
+  const puntoVentaTexto = buscar(/Punto\s*de\s*Venta\s*:?\s*(?:N[°ºo]?\.?)?\s*(\d{1,5})/i, texto);
+  const compNroTexto = buscar(/Comp\.?\s*(?:Nro|N[uú]mero)\.?\s*:?\s*(\d{1,8})/i, texto);
   const numeroFacturaTexto =
-    buscar(/(?:Comp\.?\s*Nro|N[uú]mero|Factura)\s*:?\s*(\d{4,5}[\-\s]?\d{4,8})/i, texto) ??
-    buscar(/(\b\d{4,5}-\d{8}\b)/, texto);
+    puntoVentaTexto && compNroTexto
+      ? `${puntoVentaTexto.padStart(4, "0")}-${compNroTexto.padStart(8, "0")}`
+      : buscar(/(\b\d{4,5}-\d{8}\b)/, texto) ??
+        compNroTexto ??
+        buscar(/(?:N[uú]mero|Factura)\s*:?\s*(\d{4,5}[\-\s]?\d{4,8})/i, texto);
   // Corta antes de la próxima etiqueta conocida de la factura, no solo en el
   // salto de línea: el texto de OCR suele venir sin saltos de línea limpios
   // y si no, "Nombre del proveedor" termina incluyendo el campo siguiente.
@@ -112,20 +124,37 @@ export function parsearCamposDesdeTexto(texto: string): Omit<
     buscar(/P\.?\s*Unit(?:ario|\.)?\s*:?\s*\$?\s*(\d[\d.,]*)/i, texto) ??
     filaTabla?.precioUnit;
 
+  const esMiel = detectarEsMiel(texto);
+  const tipoComprobante = detectarTipoComprobante(texto);
+  const neto = parsearMonto(netoTexto);
+  const total = parsearMonto(totalTexto);
+
+  // El IVA se calcula, no se lee de una etiqueta suelta (que en muchas
+  // facturas ni existe o viene mal formada): en miel es 10,5% del Neto
+  // (alícuota reducida), y en el resto de las facturas A, Total - Neto.
+  let ivaMonto: number | undefined;
+  if (esMiel && tipoComprobante === "FCA" && neto !== undefined) {
+    ivaMonto = redondear2(neto * 0.105);
+  } else if (neto !== undefined && total !== undefined) {
+    ivaMonto = redondear2(total - neto);
+  } else {
+    ivaMonto = parsearMonto(ivaTexto);
+  }
+
   return {
     fechaEmision: parsearFechaAAAAMMDD(fechaEmisionTexto),
     cuit: normalizarCuit(cuitTexto),
     nombreProveedor,
     numeroFactura: numeroFacturaTexto,
-    tipoComprobante: detectarTipoComprobante(texto),
-    neto: parsearMonto(netoTexto),
+    tipoComprobante,
+    neto,
     noGravado: parsearMonto(noGravadoTexto),
-    ivaMonto: parsearMonto(ivaTexto),
+    ivaMonto,
     percepciones: parsearMonto(percepcionesTexto),
-    total: parsearMonto(totalTexto),
+    total,
     kg: parsearMonto(kgTexto),
     precioFacturado: parsearMonto(precioTexto),
-    esMiel: detectarEsMiel(texto),
+    esMiel,
   };
 }
 

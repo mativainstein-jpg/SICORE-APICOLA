@@ -95,12 +95,14 @@ export function calcularRetencionGanancias(
 
 /**
  * "A Plazo" (columna N de Sicore). Solo miel, aplazo_pct % del Neto,
- * solo si Neto > aplazo_umbral_neto.
+ * solo si Neto > aplazo_umbral_neto. El usuario puede destildar
+ * "Es a plazo" para forzarlo a $0 en una factura puntual.
  */
 export function calcularAPlazo(
   factura: FacturaConfirmada,
   parametros: ParametrosFiscales,
 ): number {
+  if (!factura.aplicarAPlazo) return 0;
   if (!factura.esMiel) return 0;
   if (factura.neto <= parametros.aplazo_umbral_neto) return 0;
   return redondear2((parametros.aplazo_pct / 100) * factura.neto);

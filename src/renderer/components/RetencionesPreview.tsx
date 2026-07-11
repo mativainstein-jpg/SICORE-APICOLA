@@ -5,13 +5,15 @@ interface Props {
   retenciones: RetencionesCalculadas | undefined;
   total: number;
   cargando: boolean;
+  notas: string;
+  onCambiarNotas: (notas: string) => void;
 }
 
 const fmt = new Intl.NumberFormat("es-AR", { style: "currency", currency: "ARS" });
 
 /** Este es el bloque que se captura como "captura de pantalla" al confirmar (sección 2). */
 export const RetencionesPreview = forwardRef<HTMLDivElement, Props>(function RetencionesPreview(
-  { retenciones, total, cargando },
+  { retenciones, total, cargando, notas, onCambiarNotas },
   ref,
 ) {
   return (
@@ -55,6 +57,15 @@ export const RetencionesPreview = forwardRef<HTMLDivElement, Props>(function Ret
           </tbody>
         </table>
       )}
+      <div style={{ marginTop: 10 }}>
+        <label>Notas (opcional, queda en la captura)</label>
+        <textarea
+          value={notas}
+          onChange={(e) => onCambiarNotas(e.target.value)}
+          placeholder="Ej: pagar antes del viernes, verificar kilos..."
+          style={{ width: "100%", minHeight: 50 }}
+        />
+      </div>
     </div>
   );
 });

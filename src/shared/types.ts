@@ -74,6 +74,8 @@ export interface FacturaConfirmada {
   aplicarMinimoGanancias: boolean;
   categoriaMinimoGanancias: CategoriaMinimoGanancias;
   minimoGananciasManual?: number;
+  /** Si es false, "A Plazo" da $0 aunque sea miel y el Neto supere el umbral configurado. */
+  aplicarAPlazo: boolean;
 
   // Campos de Apícola
   banco?: string;
