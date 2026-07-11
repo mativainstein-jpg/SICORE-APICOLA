@@ -3,7 +3,9 @@ import type {
   DatosExtraidos,
   DuplicadoCheckResult,
   FacturaConfirmada,
+  FacturaPendienteDeArchivar,
   ParametrosFiscales,
+  ResultadoArchivarProveedor,
   RetencionesCalculadas,
 } from "../shared/types.js";
 
@@ -44,8 +46,8 @@ const api = {
       ipcRenderer.invoke("factura:chequearDuplicado", cuit, numeroFactura, tipoComprobante),
     previsualizarRetenciones: (factura: FacturaConfirmada): Promise<RetencionesCalculadas> =>
       ipcRenderer.invoke("factura:previsualizarRetenciones", factura),
-    confirmar: (factura: FacturaConfirmada, carpetaArchivoProveedor?: string): Promise<unknown> =>
-      ipcRenderer.invoke("factura:confirmar", factura, carpetaArchivoProveedor),
+    confirmar: (factura: FacturaConfirmada): Promise<unknown> =>
+      ipcRenderer.invoke("factura:confirmar", factura),
   },
   captura: {
     guardar: (rutaFacturaOriginal: string, pngDataUrl: string): Promise<string> =>
@@ -60,6 +62,22 @@ const api = {
       ipcRenderer.invoke("proveedor:obtenerCarpeta", cuit),
     elegirCarpeta: (cuit: string, nombreProveedorSugerido: string): Promise<string | undefined> =>
       ipcRenderer.invoke("proveedor:elegirCarpeta", cuit, nombreProveedorSugerido),
+  },
+  pendientes: {
+    listar: (): Promise<FacturaPendienteDeArchivar[]> => ipcRenderer.invoke("pendientes:listar"),
+    archivarProveedor: (
+      cuit: string,
+      rutasOriginales: string[],
+      carpetaDestinoProveedor: string,
+    ): Promise<ResultadoArchivarProveedor> =>
+      ipcRenderer.invoke(
+        "pendientes:archivarProveedor",
+        cuit,
+        rutasOriginales,
+        carpetaDestinoProveedor,
+      ),
+    quitar: (rutasOriginales: string[]): Promise<void> =>
+      ipcRenderer.invoke("pendientes:quitar", rutasOriginales),
   },
   actualizaciones: {
     onListaParaInstalar: (callback: (mensaje: string) => void): void => {

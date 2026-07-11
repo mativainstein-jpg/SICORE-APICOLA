@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import type { FacturaConfirmada } from "../shared/types.js";
 import { RevisionFactura } from "./pages/RevisionFactura.js";
 import { Configuracion } from "./pages/Configuracion.js";
+import { ArchivarFacturas } from "./pages/ArchivarFacturas.js";
 import { construirFacturaDesdeExtraccion } from "./util/construirFactura.js";
 import { renderizarPrimeraPaginaComoPng } from "./util/renderizarPdf.js";
 
-type Pantalla = "carga" | "revision" | "configuracion";
+type Pantalla = "carga" | "revision" | "configuracion" | "archivar";
 
 const MIN_CARACTERES_TEXTO_UTIL = 40;
 
@@ -18,6 +19,7 @@ export function App() {
   const [pantalla, setPantalla] = useState<Pantalla>("carga");
   const [avisoActualizacion, setAvisoActualizacion] = useState<string>();
   const [cargadas, setCargadas] = useState(0);
+  const [pendientesDeArchivar, setPendientesDeArchivar] = useState(0);
 
   useEffect(() => {
     window.sicoreApi.carpeta.obtenerDestino().then((c) => {
@@ -26,6 +28,20 @@ export function App() {
     });
     window.sicoreApi.actualizaciones.onListaParaInstalar(setAvisoActualizacion);
   }, []);
+
+  async function actualizarPendientes() {
+    try {
+      const lista = await window.sicoreApi.pendientes.listar();
+      setPendientesDeArchivar(lista.length);
+    } catch {
+      // sin carpeta destino todavía
+    }
+  }
+
+  useEffect(() => {
+    if (carpetaDestino) actualizarPendientes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [carpetaDestino, pantalla]);
 
   useEffect(() => {
     if (cola.length > 0 && !facturaEnRevision && !extrayendo) {
@@ -113,6 +129,13 @@ export function App() {
           {cargadas > 0 && <span>{cargadas} factura(s) cargada(s) hoy</span>}
           <button
             className="secundario"
+            disabled={cola.length > 0 || !!facturaEnRevision}
+            onClick={() => setPantalla("archivar")}
+          >
+            Archivar facturas{pendientesDeArchivar > 0 ? ` (${pendientesDeArchivar})` : ""}
+          </button>
+          <button
+            className="secundario"
             title={carpetaDestino}
             disabled={cola.length > 0 || !!facturaEnRevision}
             onClick={elegirCarpeta}
@@ -131,6 +154,8 @@ export function App() {
         {pantalla === "configuracion" && (
           <Configuracion onCerrar={() => setPantalla(cola.length > 0 || facturaEnRevision ? "revision" : "carga")} />
         )}
+
+        {pantalla === "archivar" && <ArchivarFacturas onCerrar={() => setPantalla("carga")} />}
 
         {pantalla === "carga" && (
           <div className="pantalla-centrada">

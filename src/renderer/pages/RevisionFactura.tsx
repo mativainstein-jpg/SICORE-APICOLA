@@ -89,17 +89,10 @@ export function RevisionFactura({ facturaInicial, onConfirmada, onOmitir }: Prop
     setGuardando(true);
     setError(undefined);
     try {
-      // Siempre se le pregunta al usuario dónde archivar el original en el
-      // servidor (arranca en la última carpeta usada para este proveedor,
-      // pero nunca se mueve solo sin que él elija/confirme). Si cancela el
-      // selector, la factura se guarda igual en los Excel, solo que el
-      // archivo original se queda donde estaba.
-      const carpetaProveedor = await window.sicoreApi.proveedor.elegirCarpeta(
-        factura.cuit,
-        factura.nombreProveedor,
-      );
-
-      await window.sicoreApi.factura.confirmar(factura, carpetaProveedor);
+      // El archivo original no se toca acá: queda pendiente de archivar y
+      // se resuelve después, en la pantalla de archivado, una vez
+      // terminada toda la carga de datos.
+      await window.sicoreApi.factura.confirmar(factura);
       if (captura) {
         await window.sicoreApi.captura.guardar(factura.archivoOriginal, captura);
       }

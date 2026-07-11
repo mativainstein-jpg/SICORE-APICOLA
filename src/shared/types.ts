@@ -122,3 +122,21 @@ export interface DuplicadoCheckResult {
   hoja?: string;
   fila?: number;
 }
+
+/**
+ * Factura ya cargada en los Excel, cuyo archivo original todavía no se
+ * archivó en la carpeta del proveedor en el servidor. Se resuelve en una
+ * pantalla aparte, después de terminar de cargar datos (no en el momento
+ * de confirmar cada factura).
+ */
+export interface FacturaPendienteDeArchivar {
+  rutaOriginal: string;
+  cuit: string;
+  nombreProveedor: string;
+  confirmadoEn: string; // ISO
+}
+
+export interface ResultadoArchivarProveedor {
+  movidos: string[];
+  errores: { ruta: string; error: string }[];
+}
