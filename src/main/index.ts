@@ -33,6 +33,9 @@ function crearVentana(): void {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
+      // Habilita el visor de PDF integrado de Chromium para el <embed> de
+      // previsualización de la factura (viene deshabilitado por defecto).
+      plugins: true,
     },
   });
 
