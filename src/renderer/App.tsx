@@ -96,7 +96,11 @@ export function App() {
   function facturaConfirmada() {
     setCargadas((n) => n + 1);
     setFacturaEnRevision(undefined);
-    if (cola.length === 0) setPantalla("carga");
+    // Apenas se termina de procesar toda la tanda (no queda nada más en
+    // cola), se abre directamente la pantalla de archivado: así el usuario
+    // decide antes de cerrar la app a dónde va cada PDF, en vez de tener
+    // que acordarse de ir a buscar ese botón después.
+    if (cola.length === 0) setPantalla("archivar");
   }
 
   function omitirFactura() {
