@@ -141,10 +141,16 @@ export async function agregarFacturaAApicola(
             .join(" — ")
         : factura.comentarios ?? "";
 
-    const fechaRecepcion = factura.fechaRecepcion ?? factura.fechaEmision;
+    // Si no se cargó Fecha de recepción, queda en blanco (campo manual sin
+    // default, sección 6) — no se inventa a partir de la fecha de emisión.
+    // Vencimiento se calcula a partir de la recepción solo si esa fecha
+    // existe; si no, también queda en blanco (nada de qué calcularlo).
+    const fechaRecepcion = factura.fechaRecepcion ?? "";
     const vencimiento =
       factura.vencimientoManual ??
-      sumarDias(fechaRecepcion, parametros.vencimiento_dias_default);
+      (fechaRecepcion
+        ? sumarDias(fechaRecepcion, parametros.vencimiento_dias_default)
+        : "");
 
     const acopiador =
       factura.acopiador === "Otro" ? factura.acopiadorOtro ?? "Otro" : factura.acopiador ?? "";
