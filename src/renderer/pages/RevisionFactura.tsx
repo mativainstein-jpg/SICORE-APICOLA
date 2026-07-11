@@ -31,12 +31,17 @@ export function RevisionFactura({ facturaInicial, onConfirmada, onOmitir }: Prop
 
   useEffect(() => {
     setCalculando(true);
+    setRetenciones(undefined);
     const timeout = setTimeout(async () => {
       try {
         const r = await window.sicoreApi.factura.previsualizarRetenciones(factura);
         setRetenciones(r);
-      } catch {
-        // se ignora hasta tanto haya carpeta destino elegida
+        setError(undefined);
+      } catch (e) {
+        // Importante: no dejar el cálculo de la factura anterior en pantalla
+        // si este falla (ej. Excel abierto en otro programa) — mejor mostrar
+        // el error que mostrar un número que no corresponde a esta factura.
+        setError((e as Error).message);
       } finally {
         setCalculando(false);
       }
