@@ -4,4 +4,12 @@ dist-electron/
 release/
 *.log
 .DS_Store
+
+# Datos reales de la empresa: si la carpeta destino elegida en la app
+# coincide con esta carpeta del código, nada de esto debe subirse a git.
 captura de pantalla/
+Facturas procesadas/
+backups/
+Sicore.xlsx
+Apicola.xlsx
+facturas_pendientes_de_archivar.json
