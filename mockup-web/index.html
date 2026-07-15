@@ -1,0 +1,733 @@
+<title>NAIMAN Foods — Mockup de sitio web</title>
+<meta name="description" content="Propuesta de rediseño: semillas y miel para el mercado internacional." />
+<style>
+  /* ---------- Tokens ---------- */
+  :root {
+    --cera: #f1e6c9;
+    --cera-deep: #e6d6a8;
+    --card: #faf4e2;
+    --ink: #2b1b0e;
+    --ink-soft: #5b4632;
+    --gold: #c98a1f;
+    --gold-deep: #a66c13;
+    --olive: #5b6b34;
+    --olive-deep: #414c26;
+    --taupe: #8a7860;
+    --taupe-line: rgba(43, 27, 14, 0.16);
+    --bark: #1c130b;
+    --focus: #2f6fb0;
+
+    --font-display: "Arial Narrow", "Helvetica Neue Condensed", "Liberation Sans Narrow", "Roboto Condensed", Arial, sans-serif;
+    --font-body: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, "Liberation Serif", serif;
+    --font-mono: "SF Mono", Consolas, Menlo, "Liberation Mono", monospace;
+
+    --fs-display: clamp(2.6rem, 4.4vw + 1rem, 5.2rem);
+    --fs-h2: clamp(1.9rem, 2.4vw + 1rem, 2.8rem);
+    --fs-h3: clamp(1.2rem, 0.7vw + 1rem, 1.5rem);
+    --fs-body: clamp(1rem, 0.2vw + 0.95rem, 1.125rem);
+    --fs-small: 0.85rem;
+
+    --container: 1180px;
+    --radius: 3px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --cera: #1c130b;
+      --cera-deep: #241a0f;
+      --card: #241a0f;
+      --ink: #f1e6c9;
+      --ink-soft: #cbb997;
+      --taupe: #6b5b45;
+      --taupe-line: rgba(241, 230, 201, 0.16);
+      --gold: #dba233;
+      --gold-deep: #f0b74a;
+      --olive: #93a768;
+      --olive-deep: #b3c58c;
+    }
+  }
+  :root[data-theme="dark"] {
+    --cera: #1c130b;
+    --cera-deep: #241a0f;
+    --card: #241a0f;
+    --ink: #f1e6c9;
+    --ink-soft: #cbb997;
+    --taupe: #6b5b45;
+    --taupe-line: rgba(241, 230, 201, 0.16);
+    --gold: #dba233;
+    --gold-deep: #f0b74a;
+    --olive: #93a768;
+    --olive-deep: #b3c58c;
+  }
+  :root[data-theme="light"] {
+    --cera: #f1e6c9;
+    --cera-deep: #e6d6a8;
+    --card: #faf4e2;
+    --ink: #2b1b0e;
+    --ink-soft: #5b4632;
+    --taupe: #8a7860;
+    --taupe-line: rgba(43, 27, 14, 0.16);
+    --gold: #c98a1f;
+    --gold-deep: #a66c13;
+    --olive: #5b6b34;
+    --olive-deep: #414c26;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--cera);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  img, svg { display: block; max-width: 100%; }
+  a { color: inherit; }
+  h1, h2, h3 { font-family: var(--font-display); text-transform: uppercase; text-wrap: balance; margin: 0; letter-spacing: 0.01em; }
+  p { text-wrap: pretty; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  .wrap { max-width: var(--container); margin: 0 auto; padding: 0 1.5rem; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--olive-deep);
+  }
+
+  /* ---------- Nota para el diseñador ---------- */
+  .brief {
+    background: var(--bark);
+    color: #f1e6c9;
+    padding: 2.25rem 0 2.5rem;
+  }
+  .brief .wrap { display: grid; gap: 1.1rem; }
+  .brief-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--fs-small);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #dba233;
+    border: 1px solid rgba(219, 162, 51, 0.5);
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    width: fit-content;
+  }
+  .brief h2 {
+    font-size: clamp(1.4rem, 1.6vw + 1rem, 2rem);
+    color: #f1e6c9;
+  }
+  .brief p { color: #d8c9a8; max-width: 62ch; }
+  .brief-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+  .brief-item {
+    border: 1px solid rgba(241, 230, 201, 0.18);
+    border-radius: var(--radius);
+    padding: 0.9rem 1rem;
+    background: rgba(241, 230, 201, 0.04);
+  }
+  .brief-item strong { display: block; font-family: var(--font-mono); font-size: var(--fs-small); letter-spacing: 0.06em; color: #dba233; text-transform: uppercase; margin-bottom: 0.35rem; }
+  .brief-item span { color: #d8c9a8; font-size: 0.92rem; }
+  .brief-note { font-size: 0.85rem; color: #a8987a; border-top: 1px dashed rgba(241, 230, 201, 0.25); padding-top: 1rem; }
+  .brief-start {
+    display: flex; align-items: center; gap: 0.75rem;
+    color: #a8987a; font-family: var(--font-mono); font-size: var(--fs-small); letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  .brief-start::after { content: ""; flex: 1; height: 1px; background: repeating-linear-gradient(90deg, rgba(241,230,201,.3) 0 6px, transparent 6px 12px); }
+
+  /* ---------- Header ---------- */
+  header.site {
+    position: sticky; top: 0; z-index: 40;
+    background: var(--cera);
+    border-bottom: 1px solid var(--taupe-line);
+  }
+  .nav-row { display: flex; align-items: center; justify-content: space-between; padding: 1.1rem 0; gap: 1rem; }
+  .brand { display: flex; align-items: center; gap: 0.6rem; text-decoration: none; }
+  .brand-mark {
+    width: 34px; height: 30px;
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    background: linear-gradient(155deg, var(--gold), var(--gold-deep));
+    flex-shrink: 0;
+  }
+  .brand-name { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; letter-spacing: 0.03em; text-transform: uppercase; line-height: 1.05; }
+  .brand-name small { display: block; font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.18em; color: var(--ink-soft); text-transform: uppercase; margin-top: 0.15rem; }
+  nav.primary { display: flex; align-items: center; gap: 1.9rem; }
+  nav.primary a {
+    text-decoration: none; font-size: 0.92rem; font-weight: 600; color: var(--ink-soft);
+    letter-spacing: 0.01em; position: relative; padding-bottom: 3px;
+  }
+  nav.primary a:hover { color: var(--ink); }
+  nav.primary a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--gold); transform: scaleX(0); transition: transform 0.18s ease; }
+  nav.primary a:hover::after { transform: scaleX(1); }
+  .lang-toggle { display: flex; font-family: var(--font-mono); font-size: 0.78rem; border: 1px solid var(--taupe-line); border-radius: 999px; overflow: hidden; }
+  .lang-toggle span { padding: 0.35rem 0.65rem; }
+  .lang-toggle span:first-child { background: var(--ink); color: var(--cera); }
+  .lang-toggle span:last-child { color: var(--ink-soft); }
+  .nav-cta {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--olive); color: #f6f1e2; text-decoration: none;
+    padding: 0.55rem 1rem; border-radius: var(--radius); font-weight: 700; font-size: 0.88rem;
+    white-space: nowrap;
+  }
+  .nav-cta:hover { background: var(--olive-deep); }
+  .nav-burger { display: none; }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: clamp(3rem, 6vw, 5.5rem) 0 clamp(3rem, 5vw, 4.5rem); position: relative; }
+  .hero .wrap { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(2rem, 4vw, 4rem); align-items: center; }
+  .hero-copy .eyebrow { margin-bottom: 0.9rem; display: block; }
+  .hero h1 { font-size: var(--fs-display); line-height: 0.98; }
+  .hero h1 em { font-style: normal; color: var(--gold-deep); }
+  .hero p.lede { margin-top: 1.3rem; font-size: 1.1rem; color: var(--ink-soft); max-width: 46ch; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 0.9rem; margin-top: 2rem; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.55rem;
+    padding: 0.85rem 1.4rem; border-radius: var(--radius);
+    font-weight: 700; font-size: 0.95rem; text-decoration: none; border: 1px solid transparent;
+    font-family: var(--font-body);
+  }
+  .btn-primary { background: var(--ink); color: var(--cera); }
+  .btn-primary:hover { background: var(--gold-deep); }
+  .btn-ghost { border-color: var(--taupe-line); color: var(--ink); }
+  .btn-ghost:hover { border-color: var(--ink); }
+  .btn svg { width: 18px; height: 18px; }
+
+  .hero-visual { position: relative; aspect-ratio: 4/5; }
+  .photo {
+    position: relative; overflow: hidden; border-radius: var(--radius);
+    display: flex; align-items: flex-end; padding: 0.8rem;
+  }
+  .photo-tag {
+    font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.06em;
+    color: #fff; background: rgba(20, 13, 6, 0.55); padding: 0.3rem 0.55rem; border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .tex-honey {
+    background:
+      linear-gradient(155deg, rgba(255,255,255,.12), transparent 45%),
+      linear-gradient(150deg, #d9a337 0%, #b97d1c 45%, #7c5310 100%);
+  }
+  .tex-honey::before {
+    content: ""; position: absolute; inset: 0; opacity: 0.35;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='96' viewBox='0 0 56 96'%3E%3Cpath d='M28 0 L56 16 L56 48 L28 64 L0 48 L0 16 Z' fill='none' stroke='%23fff8e6' stroke-width='1' stroke-opacity='0.5'/%3E%3Cpath d='M28 32 L56 48 L56 80 L28 96 L0 80 L0 48 Z' fill='none' stroke='%23fff8e6' stroke-width='1' stroke-opacity='0.5'/%3E%3C/svg%3E");
+    background-size: 56px 96px;
+  }
+  .tex-seed {
+    background: linear-gradient(160deg, #6f7c3f 0%, #4a5527 100%);
+  }
+  .tex-seed::before {
+    content: ""; position: absolute; inset: 0; opacity: 0.55;
+    background-image:
+      radial-gradient(circle, rgba(241,230,201,.55) 1.4px, transparent 1.6px),
+      radial-gradient(circle, rgba(241,230,201,.35) 1.1px, transparent 1.3px);
+    background-size: 22px 26px, 17px 19px;
+    background-position: 0 0, 9px 11px;
+  }
+  .hero-visual .photo:nth-child(1) { position: absolute; top: 0; right: 0; width: 72%; height: 62%; }
+  .hero-visual .photo:nth-child(2) { position: absolute; bottom: 0; left: 0; width: 55%; height: 46%; border: 6px solid var(--cera); }
+
+  /* ---------- Stats strip ---------- */
+  .stats { border-top: 1px solid var(--taupe-line); border-bottom: 1px solid var(--taupe-line); background: var(--cera-deep); }
+  .stats .wrap { display: grid; grid-template-columns: repeat(4, 1fr); }
+  .stat { padding: 1.6rem 1rem; text-align: center; border-left: 1px solid var(--taupe-line); }
+  .stat:first-child { border-left: none; }
+  .stat b { display: block; font-family: var(--font-display); font-size: clamp(1.6rem, 2vw, 2.2rem); color: var(--gold-deep); }
+  .stat span { font-size: 0.8rem; color: var(--ink-soft); letter-spacing: 0.02em; }
+
+  /* ---------- Section shell ---------- */
+  section { padding: clamp(3.5rem, 6vw, 5.5rem) 0; }
+  .section-head { max-width: 62ch; margin-bottom: clamp(2rem, 3vw, 3rem); }
+  .section-head h2 { font-size: var(--fs-h2); margin-top: 0.6rem; }
+  .section-head p { color: var(--ink-soft); margin-top: 0.9rem; font-size: 1.05rem; }
+
+  /* ---------- Productos ---------- */
+  .cat-toggle { display: flex; gap: 0.6rem; margin-bottom: 2.2rem; }
+  .cat-pill {
+    font-family: var(--font-mono); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em;
+    padding: 0.5rem 1rem; border-radius: 999px; border: 1px solid var(--taupe-line); color: var(--ink-soft);
+  }
+  .cat-pill.is-seed { border-color: var(--olive); color: var(--olive-deep); }
+  .cat-pill.is-honey { border-color: var(--gold); color: var(--gold-deep); }
+
+  .prod-group { margin-bottom: 3rem; }
+  .prod-group-head { display: flex; align-items: baseline; gap: 0.8rem; margin-bottom: 1.3rem; }
+  .prod-group-head h3 { font-size: var(--fs-h2); }
+  .prod-group-head.seeds h3 { color: var(--olive-deep); }
+  .prod-group-head.honey h3 { color: var(--gold-deep); }
+  .prod-group-head .rule { flex: 1; height: 1px; background: var(--taupe-line); }
+
+  .prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.3rem; }
+  .prod-card { background: var(--card); border: 1px solid var(--taupe-line); border-radius: var(--radius); overflow: hidden; }
+  .prod-card .photo { aspect-ratio: 4/3; padding: 0.6rem; }
+  .prod-card .body { padding: 1.1rem 1.15rem 1.3rem; }
+  .prod-card h4 { font-family: var(--font-display); text-transform: uppercase; font-size: 1.05rem; margin: 0 0 0.5rem; }
+  .prod-card p.desc { font-size: 0.92rem; color: var(--ink-soft); margin: 0 0 0.85rem; }
+  .prod-specs { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft); display: grid; gap: 0.25rem; border-top: 1px dashed var(--taupe-line); padding-top: 0.7rem; }
+  .prod-specs span b { color: var(--ink); font-weight: 600; }
+
+  /* ---------- Confianza ---------- */
+  .trust { background: var(--bark); color: #f1e6c9; }
+  .trust .section-head p { color: #cbb997; }
+  .trust .eyebrow { color: #dba233; }
+  .trust-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1.6rem; }
+  .trust-item { display: flex; gap: 0.9rem; }
+  .trust-item .ic { width: 34px; height: 34px; flex-shrink: 0; color: #dba233; }
+  .trust-item h4 { font-family: var(--font-display); text-transform: uppercase; font-size: 1rem; margin-bottom: 0.35rem; }
+  .trust-item p { font-size: 0.9rem; color: #cbb997; margin: 0; }
+
+  /* ---------- Contacto / redes ---------- */
+  .contact .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2.5rem, 5vw, 5rem); align-items: start; }
+  .channel-list { display: grid; gap: 0.8rem; }
+  .channel {
+    display: flex; align-items: center; gap: 0.9rem; text-decoration: none; color: var(--ink);
+    padding: 1rem 1.1rem; border: 1px solid var(--taupe-line); border-radius: var(--radius); background: var(--card);
+  }
+  .channel:hover { border-color: var(--gold); }
+  .channel .ic { width: 22px; height: 22px; color: var(--gold-deep); flex-shrink: 0; }
+  .channel .meta strong { display: block; font-size: 0.95rem; }
+  .channel .meta span { font-size: 0.82rem; color: var(--ink-soft); font-family: var(--font-mono); }
+  .channel .go { margin-left: auto; color: var(--ink-soft); }
+
+  .contact-map { border: 1px solid var(--taupe-line); border-radius: var(--radius); padding: 1.6rem; background: var(--cera-deep); }
+  .contact-map h3 { font-size: var(--fs-h3); margin-bottom: 0.8rem; }
+  .contact-map p { color: var(--ink-soft); font-size: 0.95rem; }
+  .contact-map .addr { font-family: var(--font-mono); font-size: 0.85rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px dashed var(--taupe-line); color: var(--ink-soft); }
+
+  /* ---------- CV ---------- */
+  .careers { background: var(--cera-deep); }
+  .careers .wrap { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(2rem, 4vw, 4rem); align-items: start; }
+  .careers-copy .eyebrow { color: var(--olive-deep); }
+  .careers-copy h2 { font-size: var(--fs-h2); margin-top: 0.6rem; }
+  .careers-copy p { color: var(--ink-soft); margin-top: 1rem; max-width: 40ch; }
+  .careers-list { margin-top: 1.6rem; display: grid; gap: 0.6rem; font-family: var(--font-mono); font-size: 0.82rem; color: var(--ink-soft); }
+  .careers-list li { list-style: none; display: flex; gap: 0.6rem; }
+  .careers-list li::before { content: "—"; color: var(--olive); }
+
+  form.cv { background: var(--card); border: 1px solid var(--taupe-line); border-radius: var(--radius); padding: clamp(1.5rem, 2.5vw, 2.2rem); display: grid; gap: 1.1rem; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+  .field { display: grid; gap: 0.4rem; }
+  .field label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); }
+  .field input, .field select, .field textarea {
+    font-family: var(--font-body); font-size: 0.95rem; padding: 0.7rem 0.8rem;
+    border: 1px solid var(--taupe-line); border-radius: 2px; background: var(--cera); color: var(--ink);
+  }
+  .field textarea { resize: vertical; min-height: 90px; }
+  .file-drop {
+    border: 1px dashed var(--taupe); border-radius: 2px; padding: 1.1rem; text-align: center;
+    font-size: 0.85rem; color: var(--ink-soft); display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+  }
+  .file-drop svg { width: 22px; height: 22px; color: var(--gold-deep); }
+  form.cv .btn { justify-self: start; }
+  .form-note { font-size: 0.78rem; color: var(--ink-soft); font-family: var(--font-mono); border-top: 1px dashed var(--taupe-line); padding-top: 0.8rem; }
+
+  /* ---------- Footer ---------- */
+  footer.site { background: var(--bark); color: #cbb997; padding: 3rem 0 1.6rem; }
+  .foot-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 2.5rem; padding-bottom: 2.2rem; border-bottom: 1px solid rgba(241,230,201,0.14); }
+  .foot-brand .brand-name { color: #f1e6c9; }
+  .foot-brand p { font-size: 0.88rem; margin-top: 0.9rem; max-width: 34ch; color: #a8987a; }
+  .foot-col h5 { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: #dba233; margin-bottom: 0.9rem; }
+  .foot-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
+  .foot-col a { text-decoration: none; font-size: 0.88rem; color: #cbb997; }
+  .foot-col a:hover { color: #f1e6c9; }
+  .foot-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 1.4rem; font-size: 0.78rem; color: #7d6f57; flex-wrap: wrap; gap: 0.8rem; }
+  .foot-social { display: flex; gap: 0.7rem; }
+  .foot-social a { width: 32px; height: 32px; border: 1px solid rgba(241,230,201,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .foot-social svg { width: 16px; height: 16px; color: #cbb997; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 860px) {
+    nav.primary { display: none; }
+    .nav-burger {
+      display: flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border: 1px solid var(--taupe-line); border-radius: 4px; background: none;
+    }
+    .nav-burger svg { width: 18px; height: 18px; }
+    .hero .wrap, .contact .wrap, .careers .wrap { grid-template-columns: 1fr; }
+    .hero-visual { aspect-ratio: 16/10; margin-top: 1rem; }
+    .stats .wrap { grid-template-columns: repeat(2, 1fr); }
+    .stat:nth-child(3) { border-left: none; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 540px) {
+    .foot-grid { grid-template-columns: 1fr; }
+    .brief-note { font-size: 0.8rem; }
+  }
+</style>
+
+<!-- ============ NOTA PARA EL DISEÑADOR (no forma parte del sitio) ============ -->
+<section class="brief">
+  <div class="wrap">
+    <span class="brief-tag">Nota para el diseñador — no es parte del sitio</span>
+    <h2>Referencia de estructura y tono, no diseño final</h2>
+    <p>Este mockup muestra qué contenido necesitamos y en qué orden, con una dirección visual de partida (moderna, simple, cálida — mercado agroexportador). Los colores, la tipografía y el layout son un punto de partida: la propuesta final queda en tus manos.</p>
+    <div class="brief-grid">
+      <div class="brief-item"><strong>Objetivo</strong><span>Comunicar que somos un jugador serio del mercado internacional de semillas y miel — no un sitio de catálogo genérico.</span></div>
+      <div class="brief-item"><strong>Estilo</strong><span>Moderno, simple y profesional. Poco texto por pantalla, jerarquía clara, nada recargado.</span></div>
+      <div class="brief-item"><strong>Debe incluir</strong><span>Fotos reales de campo/producción, descripción de cada línea de producto, accesos directos a redes y contacto, y una sección para dejar el CV.</span></div>
+      <div class="brief-item"><strong>Fotos</strong><span>Todos los bloques dorados (miel) y verdes (semillas) son placeholders de fotografía — hay que reemplazarlos por fotos reales de campo, apiarios, plantas y producto envasado.</span></div>
+      <div class="brief-item"><strong>Textos</strong><span>Nombre de marca, cifras, redes y descripciones de producto son de ejemplo — se ajustan con la info real de la empresa.</span></div>
+      <div class="brief-item"><strong>Formulario de CV</strong><span>Es una simulación visual (no envía nada). Se conecta a un email o servicio de formularios en la versión final.</span></div>
+    </div>
+    <p class="brief-note">Tip para el diseñador: navegá el mockup como si fuera el sitio real — scrolleá las secciones en el orden en que aparecen, esa es la jerarquía que nos importa.</p>
+  </div>
+</section>
+<div class="wrap" style="padding-top:1.4rem;"><div class="brief-start" style="color:var(--ink-soft);">Empieza el mockup del sitio</div></div>
+
+<!-- ============ HEADER ============ -->
+<header class="site">
+  <div class="wrap nav-row">
+    <a class="brand" href="#inicio">
+      <span class="brand-mark"></span>
+      <span class="brand-name">Naiman Foods<small>Semillas &amp; Miel</small></span>
+    </a>
+    <nav class="primary">
+      <a href="#productos">Productos</a>
+      <a href="#confianza">Quiénes somos</a>
+      <a href="#contacto">Contacto</a>
+      <a href="#trabajo">Trabajá con nosotros</a>
+    </nav>
+    <div style="display:flex; align-items:center; gap:1rem;">
+      <span class="lang-toggle"><span>ES</span><span>EN</span></span>
+      <a class="nav-cta" href="#contacto">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 20l1-5.4A8.5 8.5 0 1 1 21 11.5Z"/></svg>
+        Hablemos
+      </a>
+      <button class="nav-burger" aria-label="Abrir menú">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="inicio">
+  <div class="wrap">
+    <div class="hero-copy">
+      <span class="eyebrow">Exportación de semillas y miel · desde Argentina</span>
+      <h1>Del campo<br>argentino<br><em>al mundo.</em></h1>
+      <p class="lede">Producimos, seleccionamos y exportamos semillas de calidad y miel pura a más de 18 países. Trazabilidad completa, atención comercial directa, sin intermediarios.</p>
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#productos">Ver catálogo de productos</a>
+        <a class="btn btn-ghost" href="#contacto">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 20l1-5.4A8.5 8.5 0 1 1 21 11.5Z"/></svg>
+          Escribinos por WhatsApp
+        </a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="photo tex-honey"><span class="photo-tag">Foto — extracción de miel</span></div>
+      <div class="photo tex-seed"><span class="photo-tag">Foto — campo de siembra</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ STATS ============ -->
+<div class="stats">
+  <div class="wrap">
+    <div class="stat"><b>+15</b><span>Años exportando</span></div>
+    <div class="stat"><b>18</b><span>Países de destino</span></div>
+    <div class="stat"><b>100%</b><span>Trazabilidad de origen</span></div>
+    <div class="stat"><b>ISO</b><span>Calidad certificada*</span></div>
+  </div>
+</div>
+
+<!-- ============ PRODUCTOS ============ -->
+<section id="productos">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Catálogo</span>
+      <h2>Dos líneas, un mismo origen</h2>
+      <p>Trabajamos dos negocios con la misma exigencia de calidad: semillas para siembra y productos de la colmena. Cada lote sale con documentación completa para exportación.</p>
+      <div class="cat-toggle">
+        <span class="cat-pill is-seed">● Semillas</span>
+        <span class="cat-pill is-honey">● Miel &amp; derivados</span>
+      </div>
+    </div>
+
+    <div class="prod-group">
+      <div class="prod-group-head seeds"><h3>Semillas</h3><div class="rule"></div></div>
+      <div class="prod-grid">
+        <article class="prod-card">
+          <div class="photo tex-seed"><span class="photo-tag">Foto — soja</span></div>
+          <div class="body">
+            <h4>Soja</h4>
+            <p class="desc">Grano seleccionado, alto poder germinativo, apto para siembra directa.</p>
+            <div class="prod-specs">
+              <span><b>Origen:</b> Región pampeana</span>
+              <span><b>Presentación:</b> Big bag 1000 kg / a granel</span>
+              <span><b>Certificación:</b> Fitosanitario INASE</span>
+            </div>
+          </div>
+        </article>
+        <article class="prod-card">
+          <div class="photo tex-seed"><span class="photo-tag">Foto — girasol</span></div>
+          <div class="body">
+            <h4>Girasol</h4>
+            <p class="desc">Híbridos de alto rinde en aceite, control de humedad garantizado.</p>
+            <div class="prod-specs">
+              <span><b>Origen:</b> Región pampeana</span>
+              <span><b>Presentación:</b> Big bag 1000 kg</span>
+              <span><b>Certificación:</b> Fitosanitario INASE</span>
+            </div>
+          </div>
+        </article>
+        <article class="prod-card">
+          <div class="photo tex-seed"><span class="photo-tag">Foto — maíz</span></div>
+          <div class="body">
+            <h4>Maíz</h4>
+            <p class="desc">Semilla híbrida tratada, uniformidad de tamaño para siembra de precisión.</p>
+            <div class="prod-specs">
+              <span><b>Origen:</b> Región pampeana</span>
+              <span><b>Presentación:</b> Bolsa 25 kg / big bag</span>
+              <span><b>Certificación:</b> Fitosanitario INASE</span>
+            </div>
+          </div>
+        </article>
+        <article class="prod-card">
+          <div class="photo tex-seed"><span class="photo-tag">Foto — forrajeras</span></div>
+          <div class="body">
+            <h4>Semillas forrajeras</h4>
+            <p class="desc">Mezclas y variedades puras para pasturas, alta pureza varietal.</p>
+            <div class="prod-specs">
+              <span><b>Origen:</b> Multi-región</span>
+              <span><b>Presentación:</b> Bolsa 25 kg</span>
+              <span><b>Certificación:</b> Análisis de pureza</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="prod-group">
+      <div class="prod-group-head honey"><h3>Miel &amp; derivados</h3><div class="rule"></div></div>
+      <div class="prod-grid">
+        <article class="prod-card">
+          <div class="photo tex-honey"><span class="photo-tag">Foto — miel multifloral</span></div>
+          <div class="body">
+            <h4>Miel multifloral</h4>
+            <p class="desc">Miel pura de múltiples floraciones, sabor equilibrado, color ámbar claro.</p>
+            <div class="prod-specs">
+              <span><b>Origen:</b> Apiarios propios</span>
+              <span><b>Presentación:</b> Tambor 300 kg / envase minorista</span>
+              <span><b>Control:</b> HMF y residuos analizados</span>
+            </div>
+          </div>
+        </article>
+        <article class="prod-card">
+          <div class="photo tex-honey"><span class="photo-tag">Foto — miel de eucalipto</span></div>
+          <div class="body">
+            <h4>Miel de eucalipto</h4>
+            <p class="desc">Monofloral de sabor intenso, alta demanda en mercados europeos.</p>
+            <div class="prod-specs">
+              <span><b>Origen:</b> Apiarios propios</span>
+              <span><b>Presentación:</b> Tambor 300 kg</span>
+              <span><b>Control:</b> HMF y residuos analizados</span>
+            </div>
+          </div>
+        </article>
+        <article class="prod-card">
+          <div class="photo tex-honey"><span class="photo-tag">Foto — propóleo</span></div>
+          <div class="body">
+            <h4>Propóleo</h4>
+            <p class="desc">Materia prima natural para uso apícola e industrial, extracto en bruto.</p>
+            <div class="prod-specs">
+              <span><b>Origen:</b> Apiarios propios</span>
+              <span><b>Presentación:</b> A pedido</span>
+              <span><b>Control:</b> Análisis de compuestos</span>
+            </div>
+          </div>
+        </article>
+        <article class="prod-card">
+          <div class="photo tex-honey"><span class="photo-tag">Foto — cera de abejas</span></div>
+          <div class="body">
+            <h4>Cera de abejas</h4>
+            <p class="desc">Cera estampada y en bloque, apta para uso apícola e industrial.</p>
+            <div class="prod-specs">
+              <span><b>Origen:</b> Apiarios propios</span>
+              <span><b>Presentación:</b> Bloques / láminas</span>
+              <span><b>Control:</b> Trazabilidad de lote</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONFIANZA ============ -->
+<section class="trust" id="confianza">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Por qué eligen trabajar con nosotros</span>
+      <h2>Comercio exterior sin fricción</h2>
+      <p>Manejamos toda la cadena, desde el origen del producto hasta la documentación de exportación, para que del otro lado solo tengan que recibir el pedido.</p>
+    </div>
+    <div class="trust-grid">
+      <div class="trust-item">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9 12l2 2 4-4M12 3l8 4v5c0 5-3.5 8.5-8 9-4.5-.5-8-4-8-9V7l8-4Z"/></svg>
+        <div><h4>Calidad certificada</h4><p>Cada lote se analiza y documenta antes de salir de planta.</p></div>
+      </div>
+      <div class="trust-item">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h18M3 6h18M3 18h18" opacity="0"/><path d="M4 4v16M20 4v16M4 4h16M4 20h16"/><path d="M9 9h6v6H9z"/></svg>
+        <div><h4>Trazabilidad de origen</h4><p>Seguimiento completo desde el campo o apiario hasta el destino final.</p></div>
+      </div>
+      <div class="trust-item">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 16l4-8 4 3 4-6 6 11H3Z"/><path d="M3 20h18"/></svg>
+        <div><h4>Logística internacional</h4><p>Gestionamos documentación, embalaje y despacho de exportación.</p></div>
+      </div>
+      <div class="trust-item">
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c0-3.9 3.1-6 7-6s7 2.1 7 6"/></svg>
+        <div><h4>Atención directa</h4><p>Un mismo equipo comercial de principio a fin, sin intermediarios.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACTO ============ -->
+<section class="contact" id="contacto">
+  <div class="wrap">
+    <div>
+      <div class="section-head">
+        <span class="eyebrow">Contacto</span>
+        <h2>Hablemos de tu próximo pedido</h2>
+        <p>Elegí el canal que prefieras — respondemos de forma directa, sin formularios eternos.</p>
+      </div>
+      <div class="channel-list">
+        <a class="channel" href="#">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 20l1-5.4A8.5 8.5 0 1 1 21 11.5Z"/></svg>
+          <span class="meta"><strong>WhatsApp</strong><span>+54 9 XXX XXX-XXXX</span></span>
+          <span class="go">→</span>
+        </a>
+        <a class="channel" href="#">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="3.6"/><circle cx="17.2" cy="6.8" r="0.9" fill="currentColor" stroke="none"/></svg>
+          <span class="meta"><strong>Instagram</strong><span>@naimanfoods</span></span>
+          <span class="go">→</span>
+        </a>
+        <a class="channel" href="#">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 10.5V17M8 7.5v.01M12.5 17v-4a2 2 0 0 1 4 0v4M12.5 10.5V17"/></svg>
+          <span class="meta"><strong>LinkedIn</strong><span>/company/naiman-foods</span></span>
+          <span class="go">→</span>
+        </a>
+        <a class="channel" href="#">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="5.5" width="19" height="13" rx="3"/><path d="M10.5 9.5l5 2.5-5 2.5v-5Z" fill="currentColor" stroke="none"/></svg>
+          <span class="meta"><strong>YouTube</strong><span>/@naimanfoods</span></span>
+          <span class="go">→</span>
+        </a>
+        <a class="channel" href="#">
+          <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 6.5 8 6 8-6"/></svg>
+          <span class="meta"><strong>Email comercial</strong><span>comercial@naimanfoods.com</span></span>
+          <span class="go">→</span>
+        </a>
+      </div>
+    </div>
+    <div class="contact-map">
+      <h3>Oficinas y planta</h3>
+      <p>Coordinamos envíos desde nuestra planta hacia puertos de salida, con seguimiento de cada embarque hasta destino.</p>
+      <div class="addr">
+        Naiman Foods S.A.<br>
+        [Dirección de planta / oficina]<br>
+        Buenos Aires, Argentina
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TRABAJÁ CON NOSOTROS / CV ============ -->
+<section class="careers" id="trabajo">
+  <div class="wrap">
+    <div class="careers-copy">
+      <span class="eyebrow">Trabajá con nosotros</span>
+      <h2>Sumate al equipo</h2>
+      <p>Buscamos gente que quiera llevar lo mejor del campo argentino al mundo. Dejanos tu CV y te contactamos cuando surja una posición afín.</p>
+      <ul class="careers-list">
+        <li>Producción y calidad</li>
+        <li>Comercio exterior</li>
+        <li>Logística</li>
+        <li>Administración</li>
+      </ul>
+    </div>
+    <form class="cv">
+      <div class="form-row">
+        <div class="field"><label for="nombre">Nombre completo</label><input id="nombre" type="text" placeholder="Tu nombre y apellido"></div>
+        <div class="field"><label for="email">Email</label><input id="email" type="email" placeholder="vos@email.com"></div>
+      </div>
+      <div class="field">
+        <label for="area">Área de interés</label>
+        <select id="area">
+          <option>Producción y calidad</option>
+          <option>Comercio exterior</option>
+          <option>Logística</option>
+          <option>Administración</option>
+          <option>Otra</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="msg">Mensaje (opcional)</label>
+        <textarea id="msg" placeholder="Contanos brevemente sobre vos"></textarea>
+      </div>
+      <div class="field">
+        <label>Adjuntar CV</label>
+        <div class="file-drop">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+          Arrastrá tu CV en PDF o hacé clic para buscarlo
+        </div>
+      </div>
+      <button class="btn btn-primary" type="button">Enviar postulación</button>
+      <p class="form-note">Simulación visual — en la versión real este formulario envía la postulación a nuestro email de RRHH.</p>
+    </form>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="site">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <span class="brand-name">Naiman Foods<small>Semillas &amp; Miel</small></span>
+        <p>Producción y exportación de semillas y miel desde Argentina hacia el mundo.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Sitio</h5>
+        <ul><li><a href="#productos">Productos</a></li><li><a href="#confianza">Quiénes somos</a></li><li><a href="#trabajo">Trabajá con nosotros</a></li></ul>
+      </div>
+      <div class="foot-col">
+        <h5>Productos</h5>
+        <ul><li><a href="#productos">Semillas</a></li><li><a href="#productos">Miel &amp; derivados</a></li></ul>
+      </div>
+      <div class="foot-col">
+        <h5>Contacto</h5>
+        <ul><li><a href="#contacto">WhatsApp</a></li><li><a href="#contacto">comercial@naimanfoods.com</a></li></ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 Naiman Foods. Mockup de referencia — contenido de ejemplo.</span>
+      <div class="foot-social">
+        <a href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 20l1-5.4A8.5 8.5 0 1 1 21 11.5Z"/></svg></a>
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="3.6"/></svg></a>
+        <a href="#" aria-label="LinkedIn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 10.5V17M8 7.5v.01M12.5 17v-4a2 2 0 0 1 4 0v4M12.5 10.5V17"/></svg></a>
+        <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="5.5" width="19" height="13" rx="3"/><path d="M10.5 9.5l5 2.5-5 2.5v-5Z" fill="currentColor" stroke="none"/></svg></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.querySelector('.nav-burger')?.addEventListener('click', () => {
+    document.querySelector('nav.primary')?.classList.toggle('is-open');
+  });
+</script>
