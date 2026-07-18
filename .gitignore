@@ -13,3 +13,7 @@ backups/
 Sicore.xlsx
 Apicola.xlsx
 facturas_pendientes_de_archivar.json
+
+# Salida generada por graphify (grafo de conocimiento del código);
+# se regenera con `graphify . --code-only`, no hace falta versionarla.
+graphify-out/
