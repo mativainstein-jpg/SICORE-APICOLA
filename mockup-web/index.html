@@ -174,9 +174,9 @@
   nav.primary a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--gold); transform: scaleX(0); transition: transform 0.18s ease; }
   nav.primary a:hover::after { transform: scaleX(1); }
   .lang-toggle { display: flex; font-family: var(--font-mono); font-size: 0.78rem; border: 1px solid var(--taupe-line); border-radius: 999px; overflow: hidden; }
-  .lang-toggle span { padding: 0.35rem 0.65rem; }
-  .lang-toggle span:first-child { background: var(--ink); color: var(--cera); }
-  .lang-toggle span:last-child { color: var(--ink-soft); }
+  .lang-toggle button { padding: 0.35rem 0.65rem; border: none; background: none; color: var(--ink-soft); font: inherit; cursor: pointer; letter-spacing: 0.03em; }
+  .lang-toggle button:hover { color: var(--ink); }
+  .lang-toggle button[aria-pressed="true"] { background: var(--ink); color: var(--cera); }
   .nav-cta {
     display: inline-flex; align-items: center; gap: 0.5rem;
     background: var(--olive); color: #f6f1e2; text-decoration: none;
@@ -279,6 +279,31 @@
   .prod-specs { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft); display: grid; gap: 0.25rem; border-top: 1px dashed var(--taupe-line); padding-top: 0.7rem; }
   .prod-specs span b { color: var(--ink); font-weight: 600; }
 
+  /* Familias con subproductos */
+  .prod-card[data-group="seeds"] { --accent: var(--olive); }
+  .prod-card[data-group="honey"] { --accent: var(--gold); }
+  .prod-card.is-wide { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.25fr); }
+  .prod-card.is-wide .photo { aspect-ratio: auto; min-height: 100%; }
+  .prod-card.is-wide .body { padding: 1.6rem 1.8rem 1.8rem; }
+  .prod-card.is-wide h4 { font-size: 1.35rem; }
+  .variant-tabs { display: flex; flex-wrap: wrap; gap: 0.2rem 1.4rem; border-bottom: 1px solid var(--taupe-line); margin: 1.1rem 0; }
+  .variant-tabs button {
+    background: none; border: none; border-bottom: 2px solid transparent; margin-bottom: -1px; padding: 0.5rem 0;
+    font-family: var(--font-mono); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--ink-soft); cursor: pointer;
+  }
+  .variant-tabs button:hover { color: var(--ink); }
+  .variant-tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); font-weight: 700; }
+  .variant-name { font-family: var(--font-display); text-transform: uppercase; font-size: 1.05rem; margin: 0 0 0.4rem; }
+  .apps { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin-top: 0.9rem; }
+  .apps-label { font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); margin-right: 0.3rem; }
+  .chip { font-family: var(--font-mono); font-size: 0.7rem; border: 1px solid var(--taupe-line); padding: 0.2rem 0.55rem; border-radius: 999px; color: var(--ink-soft); }
+  .spec-cta {
+    display: inline-block; margin-top: 1.1rem; font-weight: 700; font-size: 0.88rem; color: var(--ink);
+    text-decoration: none; border-bottom: 2px solid var(--accent, var(--gold)); padding-bottom: 2px;
+  }
+  .spec-cta:hover { color: var(--gold-deep); }
+
   /* ---------- Confianza ---------- */
   .trust { background: var(--bark); color: #f1e6c9; }
   .trust .section-head p { color: #cbb997; }
@@ -357,11 +382,22 @@
     }
     .nav-burger svg { width: 18px; height: 18px; }
     .hero .wrap, .contact .wrap, .careers .wrap { grid-template-columns: 1fr; }
+    nav.primary.is-open {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 1rem;
+      position: absolute; top: 100%; left: 0; right: 0; padding: 1.2rem 1.5rem;
+      background: var(--cera); border-bottom: 1px solid var(--taupe-line);
+    }
+    .prod-card.is-wide { grid-template-columns: 1fr; }
+    .prod-card.is-wide .photo { aspect-ratio: 16/9; min-height: 0; }
     .hero-visual { aspect-ratio: 16/10; margin-top: 1rem; }
     .stats .wrap { grid-template-columns: repeat(2, 1fr); }
     .stat:nth-child(3) { border-left: none; }
     .foot-grid { grid-template-columns: 1fr 1fr; }
     .form-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .nav-cta { display: none; }
+    .brand-name small { display: none; }
   }
   @media (max-width: 540px) {
     .foot-grid { grid-template-columns: 1fr; }
@@ -381,6 +417,8 @@
       <div class="brief-item"><strong>Debe incluir</strong><span>Fotos reales de campo/producción, descripción de cada línea de producto, accesos directos a redes y contacto, y una sección para dejar el CV.</span></div>
       <div class="brief-item"><strong>Fotos</strong><span>Todos los bloques dorados (miel) y verdes (semillas) son placeholders de fotografía — hay que reemplazarlos por fotos reales de campo, apiarios, plantas y producto envasado.</span></div>
       <div class="brief-item"><strong>Textos</strong><span>Nombre de marca, cifras, redes y descripciones de producto son de ejemplo — se ajustan con la info real de la empresa.</span></div>
+      <div class="brief-item"><strong>Idiomas</strong><span>Selector ES / EN / PT en el header, visible en todo momento. El sitio final debe estar completo en los tres idiomas; en este mockup el contenido sigue en español.</span></div>
+      <div class="brief-item"><strong>Productos y subproductos</strong><span>Cada producto es una “familia” con solapas para sus derivados. Ej.: Arvejas → enteras, partidas, harina, fibra de cáscara. Cada solapa lleva su propia foto, ficha técnica y aplicaciones.</span></div>
       <div class="brief-item"><strong>Formulario de CV</strong><span>Es una simulación visual (no envía nada). Se conecta a un email o servicio de formularios en la versión final.</span></div>
     </div>
     <p class="brief-note">Tip para el diseñador: navegá el mockup como si fuera el sitio real — scrolleá las secciones en el orden en que aparecen, esa es la jerarquía que nos importa.</p>
@@ -402,7 +440,7 @@
       <a href="#trabajo">Trabajá con nosotros</a>
     </nav>
     <div style="display:flex; align-items:center; gap:1rem;">
-      <span class="lang-toggle"><span>ES</span><span>EN</span></span>
+      <span class="lang-toggle" role="group" aria-label="Idioma / Language / Idioma"><button type="button" data-lang-btn="es" aria-pressed="true">ES</button><button type="button" data-lang-btn="en" aria-pressed="false">EN</button><button type="button" data-lang-btn="pt" aria-pressed="false">PT</button></span>
       <a class="nav-cta" href="#contacto">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.5 8.5 0 0 1-12.3 7.6L3 20l1-5.4A8.5 8.5 0 1 1 21 11.5Z"/></svg>
         Hablemos
@@ -452,7 +490,7 @@
     <div class="section-head">
       <span class="eyebrow">Catálogo</span>
       <h2>Dos líneas, un mismo origen</h2>
-      <p>Trabajamos dos negocios con la misma exigencia de calidad: semillas para siembra y productos de la colmena. Cada lote sale con documentación completa para exportación.</p>
+      <p>Trabajamos dos negocios con la misma exigencia de calidad. Cada producto se ofrece en distintas formas — del grano entero al ingrediente procesado — y cada lote sale con documentación completa para exportación.</p>
       <div class="cat-toggle">
         <span class="cat-pill is-seed">● Semillas</span>
         <span class="cat-pill is-honey">● Miel &amp; derivados</span>
@@ -462,7 +500,64 @@
     <div class="prod-group">
       <div class="prod-group-head seeds"><h3>Semillas</h3><div class="rule"></div></div>
       <div class="prod-grid">
-        <article class="prod-card">
+        <article class="prod-card is-wide" data-group="seeds">
+          <div class="photo tex-seed"><span class="photo-tag">Foto — arvejas enteras</span></div>
+          <div class="body">
+            <h4>Arvejas</h4>
+            <p class="desc">Del mismo grano, cuatro productos: aprovechamos la arveja completa, incluso la cáscara.</p>
+            <div class="variant-tabs" role="tablist" aria-label="Productos derivados de la arveja">
+              <button type="button" role="tab" id="t-arv-0" aria-selected="true" tabindex="0" aria-controls="p-arv-0" data-photo="arvejas enteras">Enteras</button>
+              <button type="button" role="tab" id="t-arv-1" aria-selected="false" tabindex="-1" aria-controls="p-arv-1" data-photo="arvejas partidas">Partidas</button>
+              <button type="button" role="tab" id="t-arv-2" aria-selected="false" tabindex="-1" aria-controls="p-arv-2" data-photo="harina de arvejas">Harina</button>
+              <button type="button" role="tab" id="t-arv-3" aria-selected="false" tabindex="-1" aria-controls="p-arv-3" data-photo="fibra de cáscara de arveja">Fibra de cáscara</button>
+            </div>
+            <div class="variant-panel" role="tabpanel" id="p-arv-0" aria-labelledby="t-arv-0">
+              <h5 class="variant-name">Arvejas enteras</h5>
+              <p class="desc">Arveja seca entera, verde o amarilla, calibrada y limpia, para consumo humano y siembra.</p>
+              <div class="prod-specs">
+                <span><b>Origen:</b> Región pampeana</span>
+                <span><b>Presentación:</b> Big bag 1000 kg / bolsa 25 kg</span>
+                <span><b>Certificación:</b> Fitosanitario INASE</span>
+              </div>
+              <div class="apps"><span class="apps-label">Aplicaciones</span><span class="chip">Alimentación humana</span><span class="chip">Siembra</span></div>
+              <a class="spec-cta" href="#contacto">Pedir ficha técnica →</a>
+            </div>
+            <div class="variant-panel" role="tabpanel" id="p-arv-1" aria-labelledby="t-arv-1" hidden>
+              <h5 class="variant-name">Arvejas partidas</h5>
+              <p class="desc">Arveja pelada y partida, cocción rápida y uniforme, lista para sopas, cocidos y mezclas.</p>
+              <div class="prod-specs">
+                <span><b>Formato:</b> Mitades, sin cáscara</span>
+                <span><b>Origen:</b> Región pampeana</span>
+                <span><b>Presentación:</b> Bolsa 25 kg / big bag</span>
+              </div>
+              <div class="apps"><span class="apps-label">Aplicaciones</span><span class="chip">Alimentación humana</span><span class="chip">Plant-based</span></div>
+              <a class="spec-cta" href="#contacto">Pedir ficha técnica →</a>
+            </div>
+            <div class="variant-panel" role="tabpanel" id="p-arv-2" aria-labelledby="t-arv-2" hidden>
+              <h5 class="variant-name">Harina de arvejas</h5>
+              <p class="desc">Harina fina de arveja, rica en proteína vegetal, para panificados, snacks y productos plant-based.</p>
+              <div class="prod-specs">
+                <span><b>Formato:</b> Molienda fina, granulometría a pedido</span>
+                <span><b>Composición:</b> [__ %] proteína (según ficha técnica)</span>
+                <span><b>Presentación:</b> Bolsa 25 kg / big bag</span>
+              </div>
+              <div class="apps"><span class="apps-label">Aplicaciones</span><span class="chip">Panificación</span><span class="chip">Snacks</span><span class="chip">Plant-based</span></div>
+              <a class="spec-cta" href="#contacto">Pedir ficha técnica →</a>
+            </div>
+            <div class="variant-panel" role="tabpanel" id="p-arv-3" aria-labelledby="t-arv-3" hidden>
+              <h5 class="variant-name">Fibra de cáscara de arveja</h5>
+              <p class="desc">Fibra alimentaria obtenida de la cáscara: ingrediente funcional para alimentación humana y balanceados.</p>
+              <div class="prod-specs">
+                <span><b>Formato:</b> Granulometría fina / media / gruesa</span>
+                <span><b>Composición:</b> [__ %] fibra dietaria total</span>
+                <span><b>Presentación:</b> Bolsa 25 kg / big bag</span>
+              </div>
+              <div class="apps"><span class="apps-label">Aplicaciones</span><span class="chip">Alimentación humana</span><span class="chip">Nutrición animal</span><span class="chip">Panificación</span></div>
+              <a class="spec-cta" href="#contacto">Pedir ficha técnica →</a>
+            </div>
+          </div>
+        </article>
+        <article class="prod-card" data-group="seeds">
           <div class="photo tex-seed"><span class="photo-tag">Foto — soja</span></div>
           <div class="body">
             <h4>Soja</h4>
@@ -472,9 +567,10 @@
               <span><b>Presentación:</b> Big bag 1000 kg / a granel</span>
               <span><b>Certificación:</b> Fitosanitario INASE</span>
             </div>
+            <a class="spec-cta" href="#contacto">Pedir ficha técnica →</a>
           </div>
         </article>
-        <article class="prod-card">
+        <article class="prod-card" data-group="seeds">
           <div class="photo tex-seed"><span class="photo-tag">Foto — girasol</span></div>
           <div class="body">
             <h4>Girasol</h4>
@@ -484,9 +580,10 @@
               <span><b>Presentación:</b> Big bag 1000 kg</span>
               <span><b>Certificación:</b> Fitosanitario INASE</span>
             </div>
+            <a class="spec-cta" href="#contacto">Pedir ficha técnica →</a>
           </div>
         </article>
-        <article class="prod-card">
+        <article class="prod-card" data-group="seeds">
           <div class="photo tex-seed"><span class="photo-tag">Foto — maíz</span></div>
           <div class="body">
             <h4>Maíz</h4>
@@ -496,18 +593,7 @@
               <span><b>Presentación:</b> Bolsa 25 kg / big bag</span>
               <span><b>Certificación:</b> Fitosanitario INASE</span>
             </div>
-          </div>
-        </article>
-        <article class="prod-card">
-          <div class="photo tex-seed"><span class="photo-tag">Foto — forrajeras</span></div>
-          <div class="body">
-            <h4>Semillas forrajeras</h4>
-            <p class="desc">Mezclas y variedades puras para pasturas, alta pureza varietal.</p>
-            <div class="prod-specs">
-              <span><b>Origen:</b> Multi-región</span>
-              <span><b>Presentación:</b> Bolsa 25 kg</span>
-              <span><b>Certificación:</b> Análisis de pureza</span>
-            </div>
+            <a class="spec-cta" href="#contacto">Pedir ficha técnica →</a>
           </div>
         </article>
       </div>
@@ -516,31 +602,38 @@
     <div class="prod-group">
       <div class="prod-group-head honey"><h3>Miel &amp; derivados</h3><div class="rule"></div></div>
       <div class="prod-grid">
-        <article class="prod-card">
+        <article class="prod-card is-wide" data-group="honey">
           <div class="photo tex-honey"><span class="photo-tag">Foto — miel multifloral</span></div>
           <div class="body">
-            <h4>Miel multifloral</h4>
-            <p class="desc">Miel pura de múltiples floraciones, sabor equilibrado, color ámbar claro.</p>
-            <div class="prod-specs">
-              <span><b>Origen:</b> Apiarios propios</span>
-              <span><b>Presentación:</b> Tambor 300 kg / envase minorista</span>
-              <span><b>Control:</b> HMF y residuos analizados</span>
+            <h4>Miel</h4>
+            <p class="desc">Miel pura de apiarios propios, en tambor o fraccionada según el destino.</p>
+            <div class="variant-tabs" role="tablist" aria-label="Variedades de miel">
+              <button type="button" role="tab" id="t-miel-0" aria-selected="true" tabindex="0" aria-controls="p-miel-0" data-photo="miel multifloral">Multifloral</button>
+              <button type="button" role="tab" id="t-miel-1" aria-selected="false" tabindex="-1" aria-controls="p-miel-1" data-photo="miel de eucalipto">Eucalipto</button>
+            </div>
+            <div class="variant-panel" role="tabpanel" id="p-miel-0" aria-labelledby="t-miel-0">
+              <h5 class="variant-name">Miel multifloral</h5>
+              <p class="desc">Múltiples floraciones, sabor equilibrado, color ámbar claro.</p>
+              <div class="prod-specs">
+                <span><b>Origen:</b> Apiarios propios</span>
+                <span><b>Presentación:</b> Tambor 300 kg / envase minorista</span>
+                <span><b>Control:</b> HMF y residuos analizados</span>
+              </div>
+              <a class="spec-cta" href="#contacto">Pedir ficha técnica →</a>
+            </div>
+            <div class="variant-panel" role="tabpanel" id="p-miel-1" aria-labelledby="t-miel-1" hidden>
+              <h5 class="variant-name">Miel de eucalipto</h5>
+              <p class="desc">Monofloral de sabor intenso, muy buscada en mercados europeos.</p>
+              <div class="prod-specs">
+                <span><b>Origen:</b> Apiarios propios</span>
+                <span><b>Presentación:</b> Tambor 300 kg</span>
+                <span><b>Control:</b> HMF y residuos analizados</span>
+              </div>
+              <a class="spec-cta" href="#contacto">Pedir ficha técnica →</a>
             </div>
           </div>
         </article>
-        <article class="prod-card">
-          <div class="photo tex-honey"><span class="photo-tag">Foto — miel de eucalipto</span></div>
-          <div class="body">
-            <h4>Miel de eucalipto</h4>
-            <p class="desc">Monofloral de sabor intenso, alta demanda en mercados europeos.</p>
-            <div class="prod-specs">
-              <span><b>Origen:</b> Apiarios propios</span>
-              <span><b>Presentación:</b> Tambor 300 kg</span>
-              <span><b>Control:</b> HMF y residuos analizados</span>
-            </div>
-          </div>
-        </article>
-        <article class="prod-card">
+        <article class="prod-card" data-group="honey">
           <div class="photo tex-honey"><span class="photo-tag">Foto — propóleo</span></div>
           <div class="body">
             <h4>Propóleo</h4>
@@ -550,9 +643,10 @@
               <span><b>Presentación:</b> A pedido</span>
               <span><b>Control:</b> Análisis de compuestos</span>
             </div>
+            <a class="spec-cta" href="#contacto">Pedir ficha técnica →</a>
           </div>
         </article>
-        <article class="prod-card">
+        <article class="prod-card" data-group="honey">
           <div class="photo tex-honey"><span class="photo-tag">Foto — cera de abejas</span></div>
           <div class="body">
             <h4>Cera de abejas</h4>
@@ -562,6 +656,7 @@
               <span><b>Presentación:</b> Bloques / láminas</span>
               <span><b>Control:</b> Trazabilidad de lote</span>
             </div>
+            <a class="spec-cta" href="#contacto">Pedir ficha técnica →</a>
           </div>
         </article>
       </div>
@@ -727,7 +822,35 @@
 </footer>
 
 <script>
-  document.querySelector('.nav-burger')?.addEventListener('click', () => {
-    document.querySelector('nav.primary')?.classList.toggle('is-open');
+  const nav = document.querySelector('nav.primary');
+  document.querySelector('.nav-burger')?.addEventListener('click', () => nav?.classList.toggle('is-open'));
+  nav?.addEventListener('click', e => { if (e.target.closest('a')) nav.classList.remove('is-open'); });
+
+  document.querySelectorAll('.lang-toggle button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.lang-toggle button').forEach(b => b.setAttribute('aria-pressed', String(b === btn)));
+    });
+  });
+
+  document.querySelectorAll('.variant-tabs').forEach(list => {
+    const card = list.closest('.prod-card');
+    const tabs = [...list.querySelectorAll('[role="tab"]')];
+    const select = (tab, focus) => {
+      tabs.forEach(t => {
+        const on = t === tab;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        card.querySelector('#' + t.getAttribute('aria-controls')).hidden = !on;
+      });
+      card.querySelector('.photo-tag').textContent = 'Foto — ' + tab.dataset.photo;
+      if (focus) tab.focus();
+    };
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => select(tab));
+      tab.addEventListener('keydown', e => {
+        const step = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+        if (step) { e.preventDefault(); select(tabs[(i + step + tabs.length) % tabs.length], true); }
+      });
+    });
   });
 </script>
